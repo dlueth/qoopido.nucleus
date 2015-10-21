@@ -1,0 +1,140 @@
+/**
+ * Qoopido component/iterator
+ *
+ * Provides UI independent iterator mechanics
+ *
+ * Copyright (c) 2015 Dirk Lueth
+ *
+ * Dual licensed under the MIT and GPL licenses.
+ *  - http://www.opensource.org/licenses/mit-license.php
+ *  - http://www.gnu.org/copyleft/gpl.html
+ *
+ * @author Dirk Lueth <info@qoopido.com>
+ *
+ * @require ../emitter
+ * @require ../function/merge
+ */
+
+(function() {
+	'use strict';
+
+	function definition(Emitter, functionMerge) {
+		var storage = {},
+			prototype;
+
+		function getStorageProperty(uuid, property) {
+			var properties;
+
+			if(properties = storage[uuid]) {
+				return properties[property];
+			}
+		}
+
+		function getDataProperty(uuid, property) {
+			var properties;
+
+			if((properties = storage[uuid]) && properties.data) {
+				return properties.data[property];
+			}
+		}
+
+		function ComponentIterator(data, settings) {
+			var self = this.super.call(this);
+
+			storage[self.uuid] = {
+				settings: functionMerge({}, ComponentIterator.settings, settings),
+				index:    null,
+				data:     null
+			};
+
+			data && self.setData(data);
+
+			return self;
+		}
+
+		ComponentIterator.prototype = {
+			// properties
+				// length
+					get length() {
+						return getDataProperty(this.uuid, 'length') || 0;
+					},
+				// index
+					get index() {
+						return getStorageProperty(this.uuid, 'index');
+					},
+				// item
+					get item() {
+						return getDataProperty(this.uuid, this.index);
+					},
+			// methods
+				setData: function(data) {
+					var self = this,
+						uuid, properties, settings;
+
+					if(typeof data === 'object' && data.length) {
+						uuid       = self.uuid;
+						properties = storage[uuid];
+						settings   = properties.settings;
+
+						properties.data = data;
+
+						if(settings.initial !== null) {
+							self.seek(settings.initial);
+						}
+					}
+
+					return self;
+				},
+				seek: function(index) {
+					var self       = this,
+						properties = storage[self.uuid];
+
+					index = parseInt(index, 10);
+
+					if(index !== properties.index && typeof properties.data[index] !== 'undefined') {
+						properties.index = index;
+					}
+
+					return self;
+				},
+				first: function() {
+					return this.seek(0);
+				},
+				last: function() {
+					var self = this;
+
+					return self.seek(self.length - 1);
+				},
+				previous: function() {
+					var self       = this,
+						uuid       = self.uuid,
+						properties = storage[uuid],
+						settings   = properties.settings,
+						index;
+
+					index = (settings.loop === true) ? (properties.index - 1) % properties.length : properties.index - 1;
+					index = (settings.loop === true && index < 0) ? properties.length + index : index;
+
+					return self.seek(index);
+				},
+				next: function() {
+					var self       = this,
+						uuid       = self.uuid,
+						properties = storage[uuid],
+						settings   = properties.settings,
+						index;
+
+					index = (settings.loop === true) ? (properties.index + 1) % properties.length : properties.index + 1;
+
+					return self.seek(index);
+				}
+		};
+
+		prototype          = Emitter.extend(ComponentIterator);
+		prototype.settings = { loop: true, initial: 0 };
+
+		return prototype;
+	}
+
+	provide([ '../emitter', '../function/merge' ], definition);
+}());

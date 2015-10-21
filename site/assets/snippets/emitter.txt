@@ -1,0 +1,7 @@
+demand('app/module').then(function(Module) {
+  new Module()
+    .on('event', function(event, details) { ... })
+    .one('event', function(event, details) { ... })
+    .off('event', ... )
+    .emit('event', { ... });
+});
