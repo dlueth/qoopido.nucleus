@@ -1,0 +1,5 @@
+demand('/nucleus/dom/element/appear')
+  .then(function(DomElementAppear) {
+    new DomElementAppear('#footer')
+      .on('appear', function(event, details) { ... });
+  });

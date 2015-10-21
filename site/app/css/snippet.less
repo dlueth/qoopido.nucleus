@@ -1,0 +1,28 @@
+pre {
+	position:         relative;
+	margin:           0 !important;
+	padding:          0;
+	border-radius:    0 !important;
+	background-color: rgba(255, 255, 255, 0.75);
+	font:             normal 0.583em/1.25em monospace;
+}
+
+.snippet {
+	position:  absolute;
+	left:      50%;
+	bottom:    7.8rem;
+	transform: translateX(-50%);
+
+	&:before {
+		pointer-events:   none;
+		position:         absolute;
+		display:          block;
+		content:          '';
+		top:              100%;
+		left:             50%;
+		height:           1em;
+		width:            1em;
+		transform:        translateX(-50%) translateY(-50%) rotate(45deg);
+		background-color: #272822;
+	}
+}
