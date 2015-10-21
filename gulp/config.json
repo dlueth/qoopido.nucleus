@@ -1,0 +1,70 @@
+{
+  "tasks": {
+    "bump": {
+      "watch": "package.json",
+      "destination": ""
+    },
+    "site": {
+      "watch": [
+        "site/*",
+        "site/assets/**/*",
+        "site/app/css/**/*.less",
+        "site/app/js/**/*.src.js"
+      ],
+      "clean": [
+        "site/app/css/**/*.css",
+        "site/app/js/*.js",
+        "site/app/js/*.map",
+        "!site/app/js/**/*.src.js"
+      ],
+      "js": {
+        "watch": [
+          "site/app/js/**/*.src.js"
+        ],
+        "destination": "site/app/js"
+      },
+      "less": {
+        "watch": [
+          "site/app/css/**/*.less"
+        ],
+        "destination": "site/app/css"
+      }
+    },
+    "dist": {
+      "watch": [
+        "src/**/*.js"
+      ],
+      "destination": "dist/"
+    }
+  },
+  "settings": {
+    "autoprefixer": {
+      "browsers": [
+        "ie > 8",
+        "> 2%"
+      ],
+      "cascade": true
+    }
+  },
+  "strings": {
+    "banner": {
+      "min": [
+        "/*! {{gulp:package.title}} {{gulp:package.version}} | {{gulp:package.homepage}} | (c) {{gulp:date.year}} {{gulp:package.author.name}} */",
+        ""
+      ],
+      "max": [
+        "/*!",
+        "* {{gulp:package.title}}",
+        "*",
+        "* version: {{gulp:package.version}}",
+        "* date:    {{gulp:date.year}}-{{gulp:date.month}}-{{gulp:date.day}}",
+        "* author:  {{gulp:package.author.name}} <{{gulp:package.author.email}}>",
+        "* website: {{gulp:package.homepage}}",
+        "*",
+        "* Copyright (c) {{gulp:date.year}} {{gulp:package.author.name}}",
+        "*/",
+        ""
+      ]
+    }
+  }
+}
