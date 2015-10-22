@@ -6,7 +6,7 @@
 			demand
 				.configure({
 					pattern: {
-						'/nucleus':   '/dist',
+						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.0',
 						'/velocity':  '//cdn.jsdelivr.net/velocity/1.2.3/velocity.min',
 						'/prism/js':  '//cdn.jsdelivr.net/prism/1.2.0/prism.js',
 						'/prism/css': '//cdn.jsdelivr.net/prism/1.2.0/themes/prism-okaidia.css'
@@ -30,7 +30,13 @@
 		var arrayPrototypeSlice = Array.prototype.slice,
 			documentElement     = document.documentElement,
 			regexMatchBasename  = /(.+)\.(jp(e?)g|hig|png|webp)$/i,
-			viewport            = {};
+			hash                = window.location.hash,
+			viewport            = {},
+			current;
+
+		if(hash && (current = document.getElementById('section-' + hash.slice(1)))) {
+			global.scrollTo(0, current.offsetTop);
+		}
 
 		demand('/nucleus/dom/element', '/nucleus/dom/element/appear', '/nucleus/component/iterator', '/nucleus/function/debounce').then(
 			function(DomElement, DomElementAppear, ComponentIterator, functionDebounce) {
@@ -44,7 +50,7 @@
 				function onResize() {
 					viewport.width  = global.innerWidth || documentElement.clientWidth;
 					viewport.height = global.innerHeight || documentElement.clientHeigh;
-					viewport.dpr    = global.devicePixelRatio || 1;
+					viewport.dpr    = Math.min(2, global.devicePixelRatio || 1);
 
 					for(i = 0; section = sections[i]; i++) {
 						if(section.observe) {
@@ -65,6 +71,7 @@
 				body
 					.on('appear', '[itemtype="http://schema.org/WebPageElement"]', function(event, details) {
 						if(details.priority === 1) {
+							global.location.hash = this.hash;
 							iterator.seek(this.index);
 						}
 
@@ -88,12 +95,16 @@
 					});
 
 				for(i = 0; section = sections[i]; i++) {
+					hash           = section.id.slice(8);
 					title          = document.querySelector('#' + section.id + ' [itemprop="headline"]').textContent;
+					section.hash   = hash;
 					section.index  = i;
 					section.image  = document.querySelector('#' + section.id + ' [itemprop="image"]').getAttribute('content'),
-					section.marker = new DomElement('<a />', { href: '#' + section.id, itemprop: 'url', title: title }, { left: '48px', opacity: 0 })
+					section.marker = new DomElement('<a />', { href: '#' + hash, itemprop: 'url', title: title }, { left: '48px', opacity: 0 })
 						.setContent(title)
 						.appendTo(navigation);
+
+					section.setAttribute('data-hash', hash);
 
 					new DomElementAppear(section, { auto: 2 });
 
@@ -113,8 +124,11 @@
 						}
 
 						body
-							.on('click', '[itemtype="http://schema.org/SiteNavigationElement"] a', function() {
-								Velocity(document.getElementById(this.getAttribute('href').slice(1)), 'scroll', { duration: 600, easing: 'easeInOutCubic' });
+							.on('click', '[itemtype="http://schema.org/SiteNavigationElement"] a', function(event) {
+								event.preventDefault();
+								event.stopPropagation();
+
+								Velocity(document.querySelector('[data-hash="' + this.hash.slice(1) + '"]'), 'scroll', { duration: 600, easing: 'easeInOutCubic' });
 							});
 					});
 			}

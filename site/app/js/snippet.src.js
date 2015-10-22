@@ -28,7 +28,7 @@
 		}
 
 		function Snippet(section) {
-			var id      = section.id,
+			var id      = section.getAttribute('data-hash'),
 				pointer = storage[id],
 				container;
 
