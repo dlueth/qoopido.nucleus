@@ -244,15 +244,15 @@ try {
 		$type   = strtolower(preg_replace('/^.+\.(jp(e?)g|png|gif|webp)$/i', '\1', $path));
 		$type   = ($type === 'jpg') ? 'jpeg' : $type;
 		$target = preg_replace('/^(.+)\.(jp(e?)g|png|gif|webp)$/i', '\1.' . $width . 'x' . $height . '@' . $dpr . '.\2', $source);
-		$dpr    = $dpr / 100;
+		$dpr    = min(2, $dpr / 100);
 
 		if(!is_file($target)) {
 			$image = new Image($source);
 
 			$image
 				->resize(array($width * $dpr, $height * $dpr))
-				->crop($width * $dpr, $height * $dpr)
-				->sharpen();
+				->crop($width * $dpr, $height * $dpr);
+				//->sharpen();
 
 			switch($type) {
 				case 'jpeg':
