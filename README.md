@@ -51,7 +51,7 @@ Afterwards you simply have to define a ```path``` for ```/nucleus``` pointing to
 				}
 			});
 			
-		// any Nucleus modole can now be loaded via demand, e.g.
+		// any Nucleus module can now be loaded via demand, e.g.
 		demand('/nucleus/dom/element', '/nucleus/function/debounce')
 			.then(
 				function(DomElement, functionDebounce) {
