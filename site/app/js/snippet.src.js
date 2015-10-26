@@ -53,5 +53,5 @@
 		return Snippet;
 	}
 
-	provide([ 'demand', '/nucleus/dom/element', 'legacy!/velocity', 'legacy!/prism/js', 'css!/prism/css', 'css!../css/snippet.css' ], definition);
+	provide([ 'demand', '/nucleus/dom/element', 'legacy!/velocity', 'legacy!/prism/js', 'css!/prism/css', 'css!../css/snippet.css', '/demand/handler/text' ], definition);
 }());

@@ -130,6 +130,8 @@
 
 								Velocity(document.querySelector('[data-hash="' + this.hash.slice(1) + '"]'), 'scroll', { duration: 600, easing: 'easeInOutCubic' });
 							});
+
+						demand('./snippet');
 					});
 			}
 		);

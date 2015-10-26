@@ -123,7 +123,7 @@
 
 <script>
 	!function(a,b,c){!function(d,e,f,g,h){g=e.getElementsByTagName(f)[0],h=e.createElement(f),d.demand={url:a,main:b,settings:c},h.async=1,h.src=a,g.parentNode.insertBefore(h,g)}(window,document,"script")}
-	("//cdn.jsdelivr.net/qoopido.demand/2.1.0/demand.js","app/js/main",{base:"/site",version:"1.0.1",cache:true});
+	("//cdn.jsdelivr.net/qoopido.demand/2.1.0/demand.js","app/js/main",{base:"/site",version:"1.0.2",cache:true});
 </script>
 </body>
 </html>
