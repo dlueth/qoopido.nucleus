@@ -6,7 +6,7 @@
 			demand
 				.configure({
 					pattern: {
-						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.0',
+						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.1',
 						'/velocity':  '//cdn.jsdelivr.net/velocity/1.2.3/velocity.min',
 						'/prism/js':  '//cdn.jsdelivr.net/prism/1.2.0/prism.js',
 						'/prism/css': '//cdn.jsdelivr.net/prism/1.2.0/themes/prism-okaidia.css'
