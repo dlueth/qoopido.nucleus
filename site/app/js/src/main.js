@@ -1,4 +1,4 @@
-(function(global, demand, provide) {
+(function(global, document, demand, provide, setTimeout, clearTimeout) {
 	'use strict';
 
 	function definition(demand) {
@@ -6,7 +6,7 @@
 			demand
 				.configure({
 					pattern: {
-						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.0',
+						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.1',
 						'/velocity':  '//cdn.jsdelivr.net/velocity/1.2.3/velocity.min',
 						'/prism/js':  '//cdn.jsdelivr.net/prism/1.2.0/prism.js',
 						'/prism/css': '//cdn.jsdelivr.net/prism/1.2.0/themes/prism-okaidia.css'
@@ -29,49 +29,79 @@
 
 		var arrayPrototypeSlice = Array.prototype.slice,
 			documentElement     = document.documentElement,
-			regexMatchBasename  = /(.+)\.(jp(e?)g|hig|png|webp)$/i,
-			hash                = window.location.hash,
-			viewport            = {},
-			current;
+			regexMatchBasename  = /(.+)\.(jp(e?)g|gif|png|webp)$/i,
+			hash                = (document.location.hash || '#intro').substr(1),
+			viewport            = {};
 
-		if(hash && (current = document.getElementById('section-' + hash.slice(1)))) {
-			global.scrollTo(0, current.offsetTop);
-		}
+		(function() {
+			var current = document.querySelector('#section-' + hash),
+				image   = current.querySelector('[itemprop="image"]').getAttribute('content'),
+				width   = Math.ceil((global.innerWidth || documentElement.clientWidth) / 100) * 100,
+				height  = Math.ceil((global.innerHeight || documentElement.clientHeight) / 100) * 100,
+				dpr     = Math.min(2, global.devicePixelRatio || 1).toFixed(2) * 100;
 
-		demand('/nucleus/dom/element', '/nucleus/dom/element/appear', '/nucleus/component/iterator', '/nucleus/function/debounce').then(
-			function(DomElement, DomElementAppear, ComponentIterator, functionDebounce) {
+			current.style.backgroundImage = 'url(' + image.replace(regexMatchBasename, '$1.' + width + 'x' + height + '@' + dpr + '.$2') + ')';
+
+			document.addEventListener('touchstart', function(event) { event.preventDefault(); }, false);
+			document.addEventListener('touchmove', function(event) { event.preventDefault(); }, false);
+		}());
+
+		demand('/nucleus/dom/element', '/nucleus/support/css/property').then(
+			function(DomElement, supportCssProperty) {
 				var window     = new DomElement(global),
+					head       = new DomElement(document.head || document.querySelector('head')),
 					body       = new DomElement('body'),
 					navigation = new DomElement('<nav />', { itemscope: true, itemtype: 'http://schema.org/SiteNavigationElement', role: 'navigation' }),
+					style      = document.createElement('style'),
 					sections   = arrayPrototypeSlice.call(document.querySelectorAll('main [itemtype="http://schema.org/WebPageElement"]')),
-					markers     = [],
+					markers    = [],
 					iterator, i, section, title, marker;
 
 				function onResize() {
-					viewport.width  = global.innerWidth || documentElement.clientWidth;
-					viewport.height = global.innerHeight || documentElement.clientHeigh;
+					var source = '';
+
+					viewport.width  = Math.ceil((global.innerWidth || documentElement.clientWidth) / 100) * 100;
+					viewport.height = Math.ceil((global.innerHeight || documentElement.clientHeight) / 100) * 100;
 					viewport.dpr    = Math.min(2, global.devicePixelRatio || 1);
 
 					for(i = 0; section = sections[i]; i++) {
+						source += 'a[id="' + section.hash + '"]:target ~ main { ' + supportCssProperty('transform')[0] + ': translateY(-' + section.offsetTop + 'px); }';
+
 						if(section.observe) {
 							updateImage(section);
 						}
 					}
+
+					if(style.styleSheet) {
+						style.styleSheet.cssText = source;
+					} else {
+						style.textContent = source;
+					}
+				}
+
+				function setImage() {
+					var self = this;
+
+					if(self.observe) {
+						self.style.backgroundImage = 'url(' + self.image.replace(regexMatchBasename, '$1.' + viewport.width + 'x' + viewport.height + '@' + (viewport.dpr.toFixed(2) * 100) + '.$2') + ')';
+					}
 				}
 
 				function updateImage(section) {
-					section.style.backgroundImage = 'url(' + section.image.replace(regexMatchBasename, '$1.' + viewport.width + 'x' + viewport.height + '@' + (viewport.dpr.toFixed(2) * 100) + '.$2') + ')';
+					if(section.timeout) {
+						clearTimeout(section.timeout);
+					}
+
+					section.timeout = setTimeout(setImage.bind(section), 200);
 				}
 
-				iterator = new ComponentIterator()
-					.on('preSeek postSeek', function(event) {
-						sections[iterator.index || 0].marker.setAttribute('aria-selected', event === 'postSeek' ? 'true' : 'false');
-					});
+				function fadeInMarker() {
+					this.setStyles({ opacity: 1, left: 0, bottom: 0 });
+				}
 
 				body
 					.on('appear', '[itemtype="http://schema.org/WebPageElement"]', function(event, details) {
-						if(details.priority === 1) {
-							global.location.hash = this.hash;
+						if(iterator && details.priority === 1) {
 							iterator.seek(this.index);
 						}
 
@@ -79,8 +109,10 @@
 
 						this.observe = true;
 					})
-					.on('disappear', '[itemtype="http://schema.org/WebPageElement"]', function() {
-						delete this.observe;
+					.on('disappear', '[itemtype="http://schema.org/WebPageElement"]', function(event, details) {
+						if(details.priority === 1) {
+							delete this.observe;
+						}
 					})
 					.on('click', '[href="#snippet"]', function(event) {
 						var self = this;
@@ -99,36 +131,44 @@
 					title          = document.querySelector('#' + section.id + ' [itemprop="headline"]').textContent;
 					section.hash   = hash;
 					section.index  = i;
-					section.image  = document.querySelector('#' + section.id + ' [itemprop="image"]').getAttribute('content'),
-					section.marker = new DomElement('<a />', { href: '#' + hash, itemprop: 'url', title: title }, { left: '48px', opacity: 0 })
-						.setContent(title)
+					section.image  = document.querySelector('#' + section.id + ' [itemprop="image"]').getAttribute('content');
+					section.marker = new DomElement('<a />', { href: '#' + hash, itemprop: 'url', title: title })
 						.appendTo(navigation);
 
 					section.setAttribute('data-hash', hash);
 
-					new DomElementAppear(section, { auto: 2 });
-
 					markers.push(section.marker);
 				}
 
-				window.on('resize orientationchange', functionDebounce(onResize));
-				onResize();
-
-				iterator.setData(sections);
 				navigation.insertBefore('#github');
+				head.append(style);
 
-				demand('legacy!/velocity')
-					.then(function(Velocity) {
-						for(i = 0; marker = markers[i]; i++) {
-							Velocity(marker.element, { left: 0, opacity: 1 }, { duration: 100, easing: 'easeOutQuad', delay: (i + 10) * 50 });
+				for(i = 0; marker = markers[i]; i++) {
+					setTimeout(fadeInMarker.bind(marker), i * 25);
+				}
+
+				demand('/nucleus/dom/element/appear')
+					.then(function(DomElementAppear) {
+						for(i = 0; section = sections[i]; i++) {
+							new DomElementAppear(section, { auto: 2 });
 						}
 
-						body
-							.on('click', '[itemtype="http://schema.org/SiteNavigationElement"] a', function(event) {
-								event.preventDefault();
-								event.stopPropagation();
+						demand('/nucleus/function/debounce')
+							.then(function(functionDebounce) {
+								window
+									.on('resize orientationchange', functionDebounce(onResize))
+									.emit('resize');
+							});
 
-								Velocity(document.querySelector('[data-hash="' + this.hash.slice(1) + '"]'), 'scroll', { duration: 600, easing: 'easeInOutCubic' });
+						demand('/nucleus/component/iterator')
+							.then(function(ComponentIterator) {
+								iterator = new ComponentIterator()
+									.on('preSeek postSeek', function(event) {
+										sections[(iterator && iterator.index) || 0].marker.setAttribute('aria-selected', event === 'postSeek' ? 'true' : 'false');
+									})
+									.setData(sections);
+
+								demand('./snippet');
 							});
 					});
 			}
@@ -208,7 +248,7 @@
 		demand('/nucleus/task')
 			.then(
 				function(Task) {
-					new Task(function() { return +new Date(); }).then(
+					new Task(function(first, second) { return +new Date() + ' ' + first + ' ' + second; }, [ '1', '2' ]).then(
 						function(result) {
 							console.log(result);
 						}
@@ -292,4 +332,4 @@
 	}
 
 	provide([ 'demand' ], definition);
-}(this, demand, provide));
+}(this, document, demand, provide, setTimeout, clearTimeout));
