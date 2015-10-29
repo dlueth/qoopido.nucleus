@@ -27,7 +27,7 @@
 			NativeUrl    = supportMethod('URL'),
 			NativeBlob   = supportMethod('Blob'),
 			supported    = NativeWorker && NativeUrl && NativeBlob,
-			source       = 'var a=this,b=/\\s+/g;a.addEventListener("message",function(b){a.postMessage({type:"result",result:a.process(b.data.load).apply(null,b.data.parameter)})},!1),a.process=function(a){var c=a.substring(a.indexOf("(")+1,a.indexOf(")")).replace(b,",").split(",");return c.push(a.substring(a.indexOf("{")+1,a.lastIndexOf("}"))),Function.apply(null,c)};',
+			source       = 'function d(a){return a.replace(c,"").trim()}function e(a){return a}var a=this,b=/function\s.*?\(([^)]*)\)/,c=/\/\*.*\*\//;a.addEventListener("message",function(b){a.postMessage({type:"result",result:a.process(b.data.load).apply(null,b.data.parameter)})},!1),a.process=function(a){var c=a.match(b)[1].split(",").map(d).filter(e);return c.push(a.substring(a.indexOf("{")+1,a.lastIndexOf("}"))),Function.apply(null,c)};',
 			threads      = { idle: [], busy: {} },
 			queue        = [],
 			worker, i = 0;
