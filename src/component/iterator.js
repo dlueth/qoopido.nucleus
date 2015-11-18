@@ -108,23 +108,21 @@
 				previous: function() {
 					var self       = this,
 						uuid       = self.uuid,
-						properties = storage[uuid],
-						settings   = properties.settings,
+						settings   = storage[uuid].settings,
 						index;
 
-					index = (settings.loop === true) ? (properties.index - 1) % properties.length : properties.index - 1;
-					index = (settings.loop === true && index < 0) ? properties.length + index : index;
+					index = (settings.loop === true) ? (self.index - 1) % self.length : self.index - 1;
+					index = (settings.loop === true && index < 0) ? self.length + index : index;
 
 					return self.seek(index);
 				},
 				next: function() {
 					var self       = this,
 						uuid       = self.uuid,
-						properties = storage[uuid],
-						settings   = properties.settings,
+						settings   = storage[uuid].settings,
 						index;
 
-					index = (settings.loop === true) ? (properties.index + 1) % properties.length : properties.index + 1;
+					index = (settings.loop === true) ? (self.index + 1) % self.length : self.index + 1;
 
 					return self.seek(index);
 				}
