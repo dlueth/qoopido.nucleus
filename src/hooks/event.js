@@ -49,8 +49,8 @@
 					}
 				},
 				mouse: {
-					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop)/,
-					properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement dataTransfer'.split(' '),
+					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop|wheel)/,
+					properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement dataTransfer deltaX deltaY deltaZ deltaMode'.split(' '),
 					process:    function(event, originalEvent) {
 						var pointer, fromElement, which;
 
