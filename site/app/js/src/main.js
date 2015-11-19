@@ -6,7 +6,7 @@
 			demand
 				.configure({
 					pattern: {
-						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.1',
+						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.2',
 						'/velocity':  '//cdn.jsdelivr.net/velocity/1.2.3/velocity.min',
 						'/prism/js':  '//cdn.jsdelivr.net/prism/1.2.0/prism.js',
 						'/prism/css': '//cdn.jsdelivr.net/prism/1.2.0/themes/prism-okaidia.css'
@@ -42,8 +42,9 @@
 
 			current.style.backgroundImage = 'url(' + image.replace(regexMatchBasename, '$1.' + width + 'x' + height + '@' + dpr + '.$2') + ')';
 
-			document.addEventListener('touchstart', function(event) { event.preventDefault(); }, false);
+			document.addEventListener('touchstart', function(event) { if(event.target.nodeName.toLowerCase() !== 'a') { event.preventDefault(); } }, false);
 			document.addEventListener('touchmove', function(event) { event.preventDefault(); }, false);
+			document.addEventListener('touchend', function(event) { event.preventDefault(); }, false);
 		}());
 
 		demand('/nucleus/dom/element', '/nucleus/support/css/property').then(
@@ -54,6 +55,7 @@
 					navigation = new DomElement('<nav />', { itemscope: true, itemtype: 'http://schema.org/SiteNavigationElement', role: 'navigation' }),
 					style      = document.createElement('style'),
 					sections   = arrayPrototypeSlice.call(document.querySelectorAll('main [itemtype="http://schema.org/WebPageElement"]')),
+					touchState = { started: null, moved: null, oy: null, ly: null },
 					markers    = [],
 					iterator, i, section, title, marker;
 
@@ -79,6 +81,63 @@
 					}
 				}
 
+				function onWheel(event) {
+					scroll(event.deltaY);
+				}
+
+				function onTouch(event) {
+					var time    = event.timeStamp,
+						touches = event.originalEvent.targetTouches,
+						delta, velocity;
+
+					switch(event.type) {
+						case 'touchstart':
+							if(touches.length === 1) {
+								touchState.started = time;
+								touchState.oy      = touches[0].clientY;
+							}
+
+							break;
+						case 'touchmove':
+							if(touches.length === 1) {
+								touchState.moved = time;
+								touchState.ly    = touches[0].clientY;
+							}
+
+							break;
+						case 'touchend':
+							if(touchState.moved) {
+								delta    = touchState.ly - touchState.oy;
+								velocity = delta / (touchState.moved - touchState.started) || 0;
+
+								if(Math.abs(delta) > 10 && Math.abs(velocity) > 0.5) {
+									scroll(-delta);
+								} else {
+									new DomElement(event.target).emit('click');
+								}
+							} else {
+								new DomElement(event.target).emit('click');
+							}
+
+							touchState.started = null;
+							touchState.moved   = null;
+
+							break;
+						case 'touchcancel':
+							touchState.started = null;
+							touchState.moved   = null;
+
+							break;
+					}
+				}
+
+				function scroll(delta) {
+					if(iterator && delta) {
+						iterator[delta > 0 ? 'next' : 'previous']();
+						sections[iterator.index].marker.emit('click');
+					}
+				}
+
 				function setImage() {
 					var self = this;
 
@@ -98,6 +157,12 @@
 				function fadeInMarker() {
 					this.setStyles({ opacity: 1, left: 0, bottom: 0 });
 				}
+
+				demand('/nucleus/function/debounce')
+					.then(function(functionDebounce) {
+						window.on('mousewheel wheel', functionDebounce(onWheel, 100));
+						window.on('touchstart touchmove touchend touchcancel', onTouch);
+					});
 
 				body
 					.on('appear', '[itemtype="http://schema.org/WebPageElement"]', function(event, details) {
@@ -162,7 +227,7 @@
 
 						demand('/nucleus/component/iterator')
 							.then(function(ComponentIterator) {
-								iterator = new ComponentIterator()
+								iterator = new ComponentIterator(null, { loop: false })
 									.on('preSeek postSeek', function(event) {
 										sections[(iterator && iterator.index) || 0].marker.setAttribute('aria-selected', event === 'postSeek' ? 'true' : 'false');
 									})
