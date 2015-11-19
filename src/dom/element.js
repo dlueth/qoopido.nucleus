@@ -48,44 +48,14 @@
 			// flags
 			// general storage & objects
 				storage                 = {},
-				listener                = {},
-				events                  = {
-					custom: {
-						type:   'CustomEvent',
-						method: 'initCustomEvent'
-					},
-					html: {
-						match:  /^(?:load|unload|abort|error|select|change|submit|reset|focus|blur|resize|scroll)$/,
-						type:   'HTMLEvents',
-						method: 'initEvent'
-					},
-					mouse: {
-						match:  /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop)/,
-						type:   'MouseEvents',
-						method: 'initMouseEvent'
-					}
-				};
-
-		function resolveEvent(type) {
-			var id, prototype, candidate;
-
-			for(id in events) {
-				prototype = events[id];
-
-				if(!prototype.match || prototype.match.test(type)) {
-					candidate = prototype;
-				}
-			}
-
-			return candidate;
-		}
+				listener                = {};
 
 		function emitEvent(type, detail, uuid) {
-			var self      = this,
-				prototype = resolveEvent(type),
-				event     = document.createEvent(prototype.type);
+			var self = this,
+				event;
 
-			event[prototype.method](type, (type === 'load') ? false : true, true, detail);
+			event = document.createEvent('CustomEvent');
+			event.initCustomEvent(type, (type === 'load') ? false : true, true, detail);
 
 			if(uuid) {
 				event._quid      = uuid;
@@ -93,6 +63,10 @@
 			}
 
 			self.element.dispatchEvent(event);
+
+			if(self.element !== global && !event.defaultPrevented && typeof self.element[type] === 'function') {
+				self.element[type]();
+			}
 		}
 
 		function resolveElement(element) {
