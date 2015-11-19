@@ -2,6 +2,14 @@
 	user-select: none;
 }
 
+form {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translateX(-50%)
+	translateY(-50%);
+}
+
 html {
 	background-color: #333;
 	box-sizing:       border-box;
@@ -51,10 +59,11 @@ h1, h2 {
 	margin:      0 0.5rem; // 12px
 
 	span {
-		padding:          0.5rem 0; // 12px
-		box-shadow:       0.5rem 0 0 rgba(255, 255, 255, 0.75),  // 12px
-						  -0.5rem 0 0 rgba(255, 255, 255, 0.75); // 12px
-		background-color: rgba(255, 255, 255, 0.75);
+		padding:              0.5rem 0; // 12px
+		box-shadow:           0.5rem 0 0 rgba(255, 255, 255, 0.75),  // 12px
+						      -0.5rem 0 0 rgba(255, 255, 255, 0.75); // 12px
+		background-color:     rgba(255, 255, 255, 0.75);
+		box-decoration-break: clone;
 	}
 }
 
@@ -78,11 +87,12 @@ div {
 }
 
 p {
-	display:          inline;
-	padding:          0.08333333333333em 0; // 2px
-	box-shadow:       0.25em 0 0 rgba(255, 255, 255, 0.75),  // 6px
-					  -0.25em 0 0 rgba(255, 255, 255, 0.75); // 6px
-	background-color: rgba(255, 255, 255, 0.75);
+	display:              inline;
+	padding:              0.08333333333333em 0; // 2px
+	box-shadow:           0.25em 0 0 rgba(255, 255, 255, 0.75),  // 6px
+					      -0.25em 0 0 rgba(255, 255, 255, 0.75); // 6px
+	background-color:     rgba(255, 255, 255, 0.75);
+	box-decoration-break: clone;
 }
 
 nav {
@@ -204,7 +214,7 @@ nav {
 			display: block;
 
 			& + a {
-				margin-top: 0.75em; // 18px
+				margin-top: 1em; // 24px
 			}
 		}
 	}
@@ -227,5 +237,12 @@ nav {
 	h2 {
 		font-size:   1.25em; // 24px
 		line-height: 2.15; // 46px
+	}
+
+	nav {
+		a {
+			width:   1.28571428571429em; // 18px
+			height:  1.28571428571429em; // 18px
+		}
 	}
 }
