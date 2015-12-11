@@ -66,7 +66,7 @@
 			}
 
 			if(!settings.cache) {
-				url.searchParams.set('bunch[time]', +new Date());
+				url.searchParams.set('nucleus[time]', +new Date());
 			}
 
 			if(data) {

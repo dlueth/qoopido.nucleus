@@ -277,12 +277,12 @@
 				} else if(selector.charAt(0) === '>') {
 					uuid = self._quid;
 
-					self.setAttribute('bunch-uuid', uuid);
+					self.setAttribute('nucleus-uuid', uuid);
 
-					selector = '[bunch-uuid="' + uuid + '"] ' + selector;
+					selector = '[nucleus-uuid="' + uuid + '"] ' + selector;
 					matches  = self.parentNode.querySelectorAll(selector);
 
-					self.removeAttribute('bunch-uuid');
+					self.removeAttribute('nucleus-uuid');
 				} else {
 					matches = self.querySelectorAll(selector);
 				}
@@ -290,19 +290,17 @@
 				return matches && arrayPrototypeSlice.call(matches);
 			},
 			getParent: function(selector, strict) {
-				var pointer;
+				var pointer = this.element.parentNode;
 
 				if(!selector) {
-					return this.element.parentNode;
+					return pointer;
 				} else {
-					pointer = this.element;
-
 					if(strict) {
 						return pointer.matches(selector) && pointer;
 					}
 
 					for(; pointer; pointer = pointer.parentNode) {
-						if(pointer.matches(selector)) {
+						if(pointer.nodeType === 1 && pointer.matches(selector)) {
 							return pointer;
 						}
 					}

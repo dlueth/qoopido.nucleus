@@ -51,7 +51,7 @@
 			style       = document.createElement('style');
 			style.type  = 'text/css';
 
-			style.setAttribute('bunch-source', id);
+			style.setAttribute('nucleus-source', id);
 			style.setAttribute('style', 'display: none; position: absolute; width: 0; height: 0; overflow: hidden;');
 
 			target.parentNode.insertBefore(style, target);
@@ -66,7 +66,7 @@
 				listener = [];
 
 			self.index    = String(index);
-			self.source   = '@media ' + query + ' { [bunch-source="' + id + '"] { z-index: ' + index + '; } }';
+			self.source   = '@media ' + query + ' { [nucleus-source="' + id + '"] { z-index: ' + index + '; } }';
 			self.listener = listener;
 			self.mql      = {
 				matches:        false,
