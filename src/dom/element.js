@@ -427,7 +427,7 @@
 				var self = this;
 
 				if(name && !self.hasClass(name)) {
-					self.element.className += (self.element.className) ? ' ' + name : name;
+					self.element.className += (self.element.className && self.element.className !== '') ? ' ' + name : name;
 				}
 
 				return self;
