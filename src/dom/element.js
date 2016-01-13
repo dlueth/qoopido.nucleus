@@ -206,7 +206,7 @@
 					}
 
 					for(; pointer; pointer = previousSibling.call(pointer)) {
-						if(pointer.matches(selector)) {
+						if(pointer.nodeType === 1 && pointer.matches(selector)) {
 							return pointer;
 						}
 					}
@@ -223,7 +223,7 @@
 					}
 
 					for(; pointer; pointer = nextSibling.call(pointer)) {
-						if(pointer.matches(selector)) {
+						if(pointer.nodeType === 1 && pointer.matches(selector)) {
 							return pointer;
 						}
 					}
@@ -235,7 +235,7 @@
 					siblings = [];
 
 				for(; pointer; pointer = nextSibling.call(pointer)) {
-					if(pointer !== element && (!selector || pointer.matches(selector))) {
+					if(pointer !== element && pointer.nodeType === 1 && (!selector || pointer.matches(selector))) {
 						siblings.push(pointer);
 					}
 				}
@@ -247,7 +247,7 @@
 					siblings = [];
 
 				for(; pointer; pointer = previousSibling.call(pointer)) {
-					if(!selector || pointer.matches(selector)) {
+					if(pointer.nodeType === 1 && (!selector || pointer.matches(selector))) {
 						siblings.push(pointer);
 					}
 				}
@@ -259,7 +259,7 @@
 					siblings = [];
 
 				for(; pointer; pointer = nextSibling.call(pointer)) {
-					if(!selector || pointer.matches(selector)) {
+					if(pointer.nodeType === 1 && (!selector || pointer.matches(selector))) {
 						siblings.push(pointer);
 					}
 				}
