@@ -9,28 +9,28 @@ module.exports = {
 		"site": {
 			watch: [
 				"site/**/*",
-				"!site/app/css/src/**/*.less",
-				"!site/app/css/dist/**/*.css",
-				"!site/app/js/src/**/*.js",
-				"!site/app/js/dist/**/*.js",
-				"!site/app/assets/images/src/**/*",
-				"!site/app/assets/images/dist/**/*"
+				"!site/assets/css/src/**/*.less",
+				"!site/assets/css/dist/**/*.css",
+				"!site/assets/js/src/**/*.js",
+				"!site/assets/js/dist/**/*.js",
+				"!site/assets/images/src/**/*",
+				"!site/assets/images/dist/**/*"
 			]
 		},
 		"site:less": {
-			watch: "site/app/css/src/**/*.less",
-			clean: "site/app/css/dist/**/*",
-			dest:  "site/app/css/dist"
+			watch: "site/assets/css/src/**/*.less",
+			clean: "site/assets/css/dist/**/*",
+			dest:  "site/assets/css/dist"
 		},
 		"site:javascript": {
-			watch: "site/app/js/src/**/*.js",
-			clean: "site/app/js/dist/**/*",
-			dest:  "site/app/js/dist"
+			watch: "site/assets/js/src/**/*.js",
+			clean: "site/assets/js/dist/**/*",
+			dest:  "site/assets/js/dist"
 		},
 		"site:images": {
-			watch: "site/app/assets/images/src/**/*",
-			clean: "site/app/assets/images/dist/**/*",
-			dest:  "site/app/assets/images/dist"
+			watch: "site/assets/images/src/**/*",
+			clean: "site/assets/images/dist/**/*",
+			dest:  "site/assets/images/dist"
 		},
 		"dist": {
 			watch: "src/**/*.js",
