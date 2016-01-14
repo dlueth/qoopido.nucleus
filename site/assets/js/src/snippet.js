@@ -32,7 +32,7 @@
 			if(!pointer) {
 				container = new DomElement('<aside />', { class: 'snippet', itemscope: true, itemtype: 'http://schema.org/WebPageElement/Snippet' });
 
-				demand('text!../../assets/snippets/' + id + '.txt')
+				demand('text!../../snippets/' + id + '.txt')
 					.then(function(source) {
 						container.setContent('<pre><code class="language-javascript">' + source + '</code></pre>', true);
 						Prism.highlightElement(container.element.firstChild.firstChild);
