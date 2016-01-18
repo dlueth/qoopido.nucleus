@@ -27,28 +27,29 @@
 
 	function definition(isObject, isTypeOf, base, Event, hooksCss, supportMethod, functionDescriptorGenerate, functionUniqueUuid) {
 		var //shortcuts
-				documentBody            = document.body || document.getElementsByTagName('body')[0],
-				arrayPrototypeConcat    = Array.prototype.concat,
-				arrayPrototypeSlice     = Array.prototype.slice,
-				objectDefineProperty    = Object.defineProperty,
-				objectDefineProperties  = Object.defineProperties,
-				head                    = document.getElementsByTagName('head')[0],
+			documentBody             = document.body || document.getElementsByTagName('body')[0],
+			arrayPrototypeConcat     = Array.prototype.concat,
+			arrayPrototypeSlice      = Array.prototype.slice,
+			objectDefineProperty     = Object.defineProperty,
+			objectDefineProperties   = Object.defineProperties,
+			head                     = document.getElementsByTagName('head')[0],
 			// constants
-				NULL                    = null,
-				STRING_UNDEFINED        = 'undefined',
-				STRING_STRING           = 'string',
-				STRING_CONTENTATTRIBUTE = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
-				STRING_MATCHES          = supportMethod('matches', documentBody) || supportMethod('matchesSelector', documentBody),
+			NULL                     = null,
+			STRING_UNDEFINED         = 'undefined',
+			STRING_STRING            = 'string',
+			STRING_CONTENTATTRIBUTE  = ('textContent' in document.createElement('a')) ? 'textContent' : 'innerText',
+			STRING_MATCHES           = supportMethod('matches', documentBody) || supportMethod('matchesSelector', documentBody),
 			// regular expressions
-				regexMatchTag           = /^<(\w+)\s*\/>$/,
-				regexMatchSpaces        = / +/g,
+			regexMatchTag            = /^<(\w+)\s*\/>$/,
+			regexMatchSpaces         = / +/g,
+			regexMatchChildSeclector = /^\s*^/,
 			// methods
-				previousSibling         = (!isTypeOf(head.previousElementSibling, STRING_UNDEFINED)) ? function previousSibling() { return this.previousElementSibling; } : function previousSibling() {var element = this; while(element = element.previousSibling) { if(element.nodeType === 1 ) { return element; }}},
-				nextSibling             = (!isTypeOf(head.nextElementSibling, STRING_UNDEFINED)) ? function nextSibling() { return this.nextElementSibling; } : function nextSibling() {var element = this; while(element = element.nextSibling) { if(element.nodeType === 1 ) { return element; }}},
+			previousSibling          = (!isTypeOf(head.previousElementSibling, STRING_UNDEFINED)) ? function previousSibling() { return this.previousElementSibling; } : function previousSibling() {var element = this; while(element = element.previousSibling) { if(element.nodeType === 1 ) { return element; }}},
+			nextSibling              = (!isTypeOf(head.nextElementSibling, STRING_UNDEFINED)) ? function nextSibling() { return this.nextElementSibling; } : function nextSibling() {var element = this; while(element = element.nextSibling) { if(element.nodeType === 1 ) { return element; }}},
 			// flags
 			// general storage & objects
-				storage                 = {},
-				listener                = {};
+			storage                  = {},
+			listener                 = {};
 
 		function emitEvent(type, detail, uuid) {
 			var self = this,
@@ -146,12 +147,62 @@
 			return self;
 		}
 
+		function getSiblings(pointer, method, selector, limit, strict) {
+			var multiple = !(limit && limit === 1),
+				siblings = multiple ? [] : false;
+
+			strict = multiple ? false : strict;
+
+			while(pointer = method.call(pointer)) {
+				if(pointer.nodeType === 1) {
+					if(!selector || pointer[STRING_MATCHES](selector)) {
+						if(multiple) {
+							siblings.push(pointer);
+						} else {
+							return pointer;
+						}
+					}
+
+					if(strict) {
+						break;
+					}
+				}
+			}
+
+			return siblings;
+		}
+
+		function getParents(pointer, selector, limit, strict) {
+			var multiple = !(limit && limit === 1),
+				parents = multiple ? [] : false;
+
+			strict   = multiple ? false : strict;
+
+			while(pointer = pointer.parentNode) {
+				if(pointer.nodeType === 1) {
+					if(!selector || pointer[STRING_MATCHES](selector)) {
+						if(multiple) {
+							parents.push(pointer);
+						} else {
+							return pointer;
+						}
+					}
+
+					if(strict) {
+						break;
+					}
+				}
+			}
+
+			return parents
+		}
+
 		DomElement.prototype = {
 			/* only for reference
-			uuid:    NULL,
-			type:    NULL,
-			element: NULL
-			*/
+			 uuid:    NULL,
+			 type:    NULL,
+			 element: NULL
+			 */
 			getContent: function(getHtml) {
 				var element = this.element;
 
@@ -196,85 +247,27 @@
 				return result;
 			},
 			getSiblingBefore: function(selector, strict) {
-				var pointer = previousSibling.call(this.element);
-
-				if(!selector) {
-					return pointer;
-				} else {
-					if(strict) {
-						return pointer.matches(selector) && pointer;
-					}
-
-					for(; pointer; pointer = previousSibling.call(pointer)) {
-						if(pointer.nodeType === 1 && pointer.matches(selector)) {
-							return pointer;
-						}
-					}
-				}
+				return getSiblings(this.element, previousSibling, selector, 1, strict);
 			},
 			getSiblingAfter: function(selector, strict) {
-				var pointer = nextSibling.call(this.element);
-
-				if(!selector) {
-					return pointer;
-				} else {
-					if(strict) {
-						return pointer.matches(selector) && pointer;
-					}
-
-					for(; pointer; pointer = nextSibling.call(pointer)) {
-						if(pointer.nodeType === 1 && pointer.matches(selector)) {
-							return pointer;
-						}
-					}
-				}
+				return getSiblings(this.element, nextSibling, selector, 1, strict);
 			},
 			getSiblings: function(selector) {
-				var element  = this.element,
-					pointer  = element.parentNode.firstChild,
-					siblings = [];
-
-				for(; pointer; pointer = nextSibling.call(pointer)) {
-					if(pointer !== element && pointer.nodeType === 1 && (!selector || pointer.matches(selector))) {
-						siblings.push(pointer);
-					}
-				}
-
-				return siblings;
+				return this.getSiblingsBefore(selector).concat(this.getSiblingsAfter(selector));
 			},
 			getSiblingsBefore: function(selector) {
-				var pointer  = previousSibling.call(this.element),
-					siblings = [];
-
-				for(; pointer; pointer = previousSibling.call(pointer)) {
-					if(pointer.nodeType === 1 && (!selector || pointer.matches(selector))) {
-						siblings.push(pointer);
-					}
-				}
-
-				return siblings;
+				return getSiblings(this.element, previousSibling, selector);
 			},
 			getSiblingsAfter: function(selector) {
-				var pointer  = nextSibling.call(this.element),
-					siblings = [];
-
-				for(; pointer; pointer = nextSibling.call(pointer)) {
-					if(pointer.nodeType === 1 && (!selector || pointer.matches(selector))) {
-						siblings.push(pointer);
-					}
-				}
-
-				return siblings;
+				return getSiblings(this.element, nextSibling, selector);
 			},
 			getChildren: function(selector) {
 				var self = this.element,
 					uuid, matches;
 
-				selector = selector.trim();
-
-				if(selector === '') {
+				if(!selector) {
 					matches = self.childNodes;
-				} else if(selector.charAt(0) === '>') {
+				} else if(regexMatchChildSeclector.test(selector)) {
 					uuid = self._quid;
 
 					self.setAttribute('nucleus-uuid', uuid);
@@ -290,35 +283,10 @@
 				return matches && arrayPrototypeSlice.call(matches);
 			},
 			getParent: function(selector, strict) {
-				var pointer = this.element.parentNode;
-
-				if(!selector) {
-					return pointer;
-				} else {
-					if(strict) {
-						return pointer.matches(selector) && pointer;
-					}
-
-					for(; pointer; pointer = pointer.parentNode) {
-						if(pointer.nodeType === 1 && pointer.matches(selector)) {
-							return pointer;
-						}
-					}
-				}
+				return getParents(this.element, selector, 1, strict);
 			},
 			getParents: function(selector) {
-				var pointer = this.element.parentNode,
-					parents = [];
-
-				for(; pointer; pointer = pointer.parentNode) {
-					if(pointer.nodeType === 9) {
-						return parents;
-					} else if (pointer.nodeType === 1) {
-						if(!selector || pointer.matches(selector)) {
-							parents.push(pointer);
-						}
-					}
-				}
+				return getParents(this.element, selector);
 			},
 			hasClass: function(name) {
 				return (name) ? (new RegExp('(?:^|\\s)' + name + '(?:\\s|$)')).test(this.element.className) : false;
@@ -436,7 +404,7 @@
 				var self = this;
 
 				if(name && self.hasClass(name)) {
-					self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'), '');
+					self.element.className = self.element.className.replace(new RegExp('(?:^|\\s)' + name + '(?!\\S)'), '').trim();
 				}
 
 				return self;
