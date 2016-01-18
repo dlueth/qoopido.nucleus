@@ -149,8 +149,9 @@
 
 		function getSiblings(pointer, method, selector, limit, strict) {
 			var multiple = !(limit && limit === 1),
-				strict   = multiple ? false : strict,
 				siblings = multiple ? [] : false;
+
+			strict = multiple ? false : strict;
 
 			while(pointer = method.call(pointer)) {
 				if(pointer.nodeType === 1) {
@@ -173,8 +174,9 @@
 
 		function getParents(pointer, selector, limit, strict) {
 			var multiple = !(limit && limit === 1),
-				strict   = multiple ? false : strict,
 				parents = multiple ? [] : false;
+
+			strict   = multiple ? false : strict;
 
 			while(pointer = pointer.parentNode) {
 				if(pointer.nodeType === 1) {
