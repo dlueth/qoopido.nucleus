@@ -96,7 +96,7 @@
 			storage[uuid] = {
 				settings:   settings,
 				boundaries: {},
-				state:      0
+				state:      -1
 			};
 
 			window.on(EVENTS_RESIZE, functionDebounce(updateBoundaries.bind(self)));
