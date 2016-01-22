@@ -96,7 +96,7 @@
 			storage[uuid] = {
 				settings:   settings,
 				boundaries: {},
-				state:      0
+				state:      -1
 			};
 
 			window.on(EVENTS_RESIZE, functionDebounce(updateBoundaries.bind(self)));
@@ -113,7 +113,7 @@
 			visibility: true
 		};
 
-		window.on(EVENTS_RESIZE, functionDebounce(updateViewport))
+		window.on(EVENTS_RESIZE, functionDebounce(updateViewport));
 		updateViewport();
 
 		setInterval(function() {

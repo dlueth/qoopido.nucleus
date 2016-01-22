@@ -6,10 +6,10 @@
 			demand
 				.configure({
 					pattern: {
-						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.4',
+						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.0.6',
 						'/probe':     'https://probe.qoopido.com/1.0.0/beacon.js',
-						'/prism/js':  '//cdn.jsdelivr.net/prism/1.2.0/prism.js',
-						'/prism/css': '//cdn.jsdelivr.net/prism/1.2.0/themes/prism-okaidia.css'
+						'/prism/js':  '//cdn.jsdelivr.net/prism/1.3.0/prism.js',
+						'/prism/css': '//cdn.jsdelivr.net/prism/1.3.0/themes/prism-okaidia.css'
 					},
 					modules: {
 						'/demand/handler/legacy': {
