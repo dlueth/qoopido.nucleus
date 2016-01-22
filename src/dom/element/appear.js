@@ -113,7 +113,7 @@
 			visibility: true
 		};
 
-		window.on(EVENTS_RESIZE, functionDebounce(updateViewport))
+		window.on(EVENTS_RESIZE, functionDebounce(updateViewport));
 		updateViewport();
 
 		setInterval(function() {
