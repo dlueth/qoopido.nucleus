@@ -48,7 +48,6 @@
 			nextSibling              = (!isTypeOf(head.nextElementSibling, STRING_UNDEFINED)) ? function nextSibling() { return this.nextElementSibling; } : function nextSibling() {var element = this; while(element = element.nextSibling) { if(element.nodeType === 1 ) { return element; }}},
 			// flags
 			// general storage & objects
-			storage                  = {},
 			listener                 = {};
 
 		function emitEvent(type, detail, uuid) {
@@ -120,21 +119,17 @@
 			uuid    = element._quid;
 
 			if(!uuid) {
-				uuid = functionUniqueUuid();
-
-				objectDefineProperties(self, {
-					uuid:    functionDescriptorGenerate(uuid),
-					type:    functionDescriptorGenerate(element === global ? '#window' : element.nodeName),
-					element: functionDescriptorGenerate(element)
-				});
+				uuid           = functionUniqueUuid();
+				listener[uuid] = {};
 
 				objectDefineProperty(element, '_quid', functionDescriptorGenerate(uuid));
-
-				storage[uuid]  = self;
-				listener[uuid] = {};
-			} else {
-				self = storage[uuid];
 			}
+
+			objectDefineProperties(self, {
+				uuid:    functionDescriptorGenerate(uuid),
+				type:    functionDescriptorGenerate(element === global ? '#window' : element.nodeName),
+				element: functionDescriptorGenerate(element)
+			});
 
 			if(isObject(attributes)) {
 				self.setAttributes(attributes);
