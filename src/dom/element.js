@@ -198,6 +198,9 @@
 			 type:    NULL,
 			 element: NULL
 			 */
+			clone: function() {
+				return new DomElement(this.element.cloneNode(true));
+			},
 			getContent: function(getHtml) {
 				var element = this.element;
 
