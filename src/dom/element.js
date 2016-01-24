@@ -258,24 +258,30 @@
 			},
 			getChildren: function(selector) {
 				var self = this.element,
-					uuid, matches;
+					uuid, matches, i, match;
 
 				if(!selector) {
-					matches = self.childNodes;
+					matches = [];
+
+					for(i = 0; match = self.childNodes[i]; i++) {
+						if(match.nodeType === 1) {
+							matches.push(match);
+						}
+					}
 				} else if(regexMatchChildSeclector.test(selector)) {
 					uuid = self._quid;
 
 					self.setAttribute('nucleus-uuid', uuid);
 
 					selector = '[nucleus-uuid="' + uuid + '"] ' + selector;
-					matches  = self.parentNode.querySelectorAll(selector);
+					matches  = arrayPrototypeSlice.call(self.parentNode.querySelectorAll(selector));
 
 					self.removeAttribute('nucleus-uuid');
 				} else {
-					matches = self.querySelectorAll(selector);
+					matches = arrayPrototypeSlice.call(self.querySelectorAll(selector));
 				}
 
-				return matches && arrayPrototypeSlice.call(matches);
+				return matches;
 			},
 			getParent: function(selector, strict) {
 				return getParents(this.element, selector, 1, strict);
