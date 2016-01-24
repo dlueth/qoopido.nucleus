@@ -137,7 +137,7 @@
 
 <script>
 	!function(a,b,c){!function(d,e,f,g,h){g=e.getElementsByTagName(f)[0],h=e.createElement(f),d.demand={url:a,main:b,settings:c},h.async=1,h.src=a,g.parentNode.insertBefore(h,g)}(window,document,"script")}
-	("//cdn.jsdelivr.net/qoopido.demand/2.1.2/demand.js","assets/js/dist/main",{base:"/site",version:"1.0.4",cache:false});
+	("//cdn.jsdelivr.net/qoopido.demand/2.1.2/demand.js","assets/js/dist/main",{base:"/site",version:"1.0.7",cache:false});
 </script>
 </body>
 </html>
