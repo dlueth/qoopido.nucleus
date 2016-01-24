@@ -16,6 +16,7 @@
     "url": "https://github.com/dlueth/qoopido.nucleus/issues"
   },
   "license": "(MIT OR GPL-3.0+)",
+  "main": "dist/base.js",
   "filename": "base.js",
   "autoupdate": {
     "source": "git",
