@@ -39,7 +39,7 @@
 		}
 
 		function ComponentIterator(data, settings) {
-			var self = this.super.call(this);
+			var self = Emitter.prototype.constructor.call(this);
 
 			storage[self.uuid] = {
 				settings: functionMerge({}, ComponentIterator.settings, settings),
