@@ -84,7 +84,7 @@
 		}
 
 		function DomElementAppear(element, settings) {
-			var self = DomElement.prototype.constructor.call(this, element, settings),
+			var self = DomElement.prototype.constructor.call(this, element),
 				uuid = self.uuid;
 
 			settings = functionMerge({}, DomElementAppear.settings, settings);
