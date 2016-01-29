@@ -35,7 +35,6 @@
 			});
 
 			properties['constructor'] = functionDescriptorGenerate(fn);
-			properties['super']       = functionDescriptorGenerate(parent);
 
 			fn.prototype = objectCreate(parent.prototype || parent, properties);
 

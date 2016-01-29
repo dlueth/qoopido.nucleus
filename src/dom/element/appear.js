@@ -84,7 +84,7 @@
 		}
 
 		function DomElementAppear(element, settings) {
-			var self = this.super.call(this, element),
+			var self = DomElement.prototype.constructor.call(this, element, settings),
 				uuid = self.uuid;
 
 			settings = functionMerge({}, DomElementAppear.settings, settings);
@@ -103,6 +103,8 @@
 
 			updateBoundaries.call(self);
 			elements.push(self);
+
+			return self;
 		}
 
 		prototype = DomElement.extend(DomElementAppear);

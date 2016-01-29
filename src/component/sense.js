@@ -23,7 +23,7 @@
 		var storage = {};
 
 		function ComponentSense(query) {
-			var self = this.super.call(this),
+			var self = Emitter.prototype.constructor.call(this),
 				mql  = matchMedia(query);
 
 			storage[self.uuid] = mql;
