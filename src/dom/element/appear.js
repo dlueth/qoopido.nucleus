@@ -135,7 +135,7 @@
 
 								break;
 							case 1:
-								element.emit(properties.state === 0 ? EVENT_APPEAR : EVENT_DISAPPEAR, { priority: 2 });
+								element.emit(properties.state <= 0 ? EVENT_APPEAR : EVENT_DISAPPEAR, { priority: 2 });
 
 								break;
 							case 2:
