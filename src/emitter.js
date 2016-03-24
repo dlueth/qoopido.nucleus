@@ -19,24 +19,52 @@
 	'use strict';
 
 	function definition(base, functionDescriptorGenerate, functionUniqueUuid) {
-		var regexMatchExcludedMethods      = /^(_|((get|has|is)([A-Z]|$)))/,
+		var regexMatchExcludedMethods      = /^(_|((get|has|is)([A-Z]|$))|(on|one|off|emit)$)/,
 			objectDefineProperty           = Object.defineProperty,
 			objectGetOwnPropertyNames      = Object.getOwnPropertyNames,
 			objectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
 			objectGetPrototypeOf           = Object.getPrototypeOf,
+			objectPrototype                = Object.prototype,
 			storage                        = {};
+
+		function getPropertyNames(object) {
+			var prototype = object,
+				keys      = [],
+				names, i, name;
+
+			while(prototype !== objectPrototype) {
+				for(names = objectGetOwnPropertyNames(prototype), i = 0; name = names[i]; i++) {
+					keys.indexOf(name) === -1 && keys.push(name);
+				}
+
+				prototype = prototype.__proto__;
+			}
+
+			return keys;
+		}
+
+		function getPropertyDescriptor(object, property) {
+			var prototype = object,
+				descriptor;
+
+			while(prototype && !(descriptor = objectGetOwnPropertyDescriptor(prototype, property))) {
+				prototype = prototype.__proto__;
+			}
+
+			return descriptor;
+		}
 
 		function conceal() {
 			var self       = this,
 				prototype  = self.constructor.prototype,
-				properties = objectGetOwnPropertyNames(prototype); // might have to be changed to Object.keys + further checks
+				properties = getPropertyNames(prototype);
 
 			properties.forEach(function(property) {
-				var event, descriptor;
+				var descriptor = getPropertyDescriptor(prototype, property),
+					event;
 
-				if(typeof self[property] === 'function' && regexMatchExcludedMethods.test(property) === false && objectGetOwnPropertyDescriptor(prototype, property).writable) {
-					event      = property.charAt(0).toUpperCase() + property.slice(1);
-					descriptor = objectGetOwnPropertyDescriptor(prototype, property);
+				if(typeof self[property] === 'function' && regexMatchExcludedMethods.test(property) === false) {
+					event = property.charAt(0).toUpperCase() + property.slice(1);
 
 					descriptor.value = function() {
 						var result;
