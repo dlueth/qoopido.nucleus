@@ -6,10 +6,9 @@
 			demand
 				.configure({
 					pattern: {
-						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.1.0',
-						'/probe':     'https://probe.qoopido.com/1.0.0/beacon.js',
-						'/prism/js':  '//cdn.jsdelivr.net/prism/1.3.0/prism.js',
-						'/prism/css': '//cdn.jsdelivr.net/prism/1.3.0/themes/prism-okaidia.css'
+						'/nucleus':   '//cdn.jsdelivr.net/qoopido.nucleus/1.1.1',
+						'/prism/js':  '//cdn.jsdelivr.net/prism/1.4.1/prism.js',
+						'/prism/css': '//cdn.jsdelivr.net/prism/1.4.1/themes/prism-okaidia.css'
 					},
 					modules: {
 						'/demand/handler/legacy': {
@@ -235,15 +234,6 @@
 									.setData(sections);
 
 								demand('./snippet', './ga');
-
-								if('performance' in global) {
-									demand('./rum')
-										.then(
-											function(rum) {
-												rum(hero);
-											}
-										);
-								}
 							});
 					});
 			}
