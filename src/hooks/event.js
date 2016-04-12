@@ -50,7 +50,7 @@
 				},
 				mouse: {
 					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop|wheel)/,
-					properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement dataTransfer deltaX deltaY deltaZ deltaMode'.split(' '),
+					properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement dataTransfer deltaX deltaY deltaZ deltaMode targetTouches'.split(' '),
 					process:    function(event, originalEvent) {
 						var pointer, fromElement, which;
 
