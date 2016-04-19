@@ -69,14 +69,14 @@
 
 		function check() {
 			var self       = this,
-				element    = self.element,
+				node       = self.node,
 				properties = storage[self.uuid];
 
-			if(isWithinBoundaries(element, viewport)) {
+			if(isWithinBoundaries(node, viewport)) {
 				return 2;
 			}
 
-			if(isWithinBoundaries(element, properties.boundaries)) {
+			if(isWithinBoundaries(node, properties.boundaries)) {
 				return 1;
 			}
 

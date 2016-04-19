@@ -11,7 +11,6 @@
  *
  * @author Dirk Lueth <info@qoopido.com>
  *
- * @use /demand/validator/isObject
  * @use /demand/validator/isTypeOf
  * @use /demand/validator/isInstanceOf
  *
@@ -23,9 +22,34 @@
 (function(document) {
 	'use strict';
 
-	function definition(isObject, isTypeOf, isInstanceOf, base, DomElement, functionDescriptorGenerate) {
+	function definition(isTypeOf, isInstanceOf, base, DomElement, functionDescriptorGenerate) {
 		var arrayPrototypeSlice  = Array.prototype.slice,
 			objectDefineProperty = Object.defineProperty;
+
+		function resolveElements(elements) {
+			var selectors, selector, i = 0;
+
+			if(isTypeOf(elements, 'string')) {
+				selectors = elements.split(',');
+				elements  = [];
+
+				for(i = 0; selector = selectors[i]; i++) {
+					try {
+						elements = elements.concat(arrayPrototypeSlice.call(document.querySelectorAll(selector)));
+					} catch(exception) {} // eslint-disable-line no-empty
+				}
+			}
+
+			if(elements.length && !Array.isArray(elements)) {
+				elements = arrayPrototypeSlice.call(elements);
+			}
+
+			if(!Array.isArray(elements)) {
+				elements = [ elements ];
+			}
+
+			return elements;
+		}
 
 		function map(method) {
 			var self      = this,
@@ -57,50 +81,65 @@
 				i = 0, element;
 
 			for(; element = elements[i]; i++) {
-				fragment.appendChild(element.element);
+				fragment.appendChild(element.node);
 			}
 
 			return fragment;
 		}
 
-		function DomCollection(elements, attributes, styles) {
-			var self = this,
-				selectors, selector, i, element;
+		function DomCollection(elements) {
+			var self = this;
 
-			if(isTypeOf(elements, 'string')) {
-				selectors = elements.split(',');
-				elements  = [];
+			objectDefineProperty(self, 'elements', functionDescriptorGenerate([]));
+			objectDefineProperty(self, 'nodes', functionDescriptorGenerate([]));
 
-				for(i = 0; selector = selectors[i]; i++) {
-					try {
-						elements = elements.concat(arrayPrototypeSlice.call(document.querySelectorAll(selector)));
-					} catch(exception) {} // eslint-disable-line no-empty
-				}
+			if(elements) {
+				self.add(elements);
 			}
-
-			if(!Array.isArray(elements)) {
-				elements = arrayPrototypeSlice.call(elements);
-			}
-
-			for(i = 0; element = elements[i]; i++) {
-				elements[i] = new DomElement(element);
-			}
-
-			objectDefineProperty(self, 'elements', functionDescriptorGenerate(elements));
-
-			isObject(attributes) && self.setAttributes(attributes);
-			isObject(styles) && self.setStyles(styles);
 		}
 
 		DomCollection.prototype = {
 			/* only for reference
 			elements: null,
+			nodes:    null
 			*/
 			get length() {
 				return this.elements.length;
 			},
 			get: function(index) {
 				return this.elements[index];
+			},
+			add: function(elements) {
+				var self = this,
+					i = 0, temp;
+
+				elements = resolveElements(elements);
+
+				for(; temp = elements[i]; i++) {
+					if(self.nodes.indexOf(temp.node || temp) === -1) {
+						temp = isInstanceOf(temp, DomElement) ? temp : new DomElement(temp);
+
+						self.elements.push(temp);
+						self.nodes.push(temp.node);
+					}
+				}
+
+				return self;
+			},
+			remove: function(elements) {
+				var self = this,
+					i = 0, temp, index;
+
+				elements = resolveElements(elements);
+
+				for(; temp = elements[i]; i++) {
+					if((index = self.nodes.indexOf(temp.node || temp)) !== -1) {
+						self.elements.splice(index, 1);
+						self.nodes.splice(index, 1);
+					}
+				}
+
+				return self;
 			},
 			each: function(callback) {
 				var self     = this,
@@ -157,7 +196,7 @@
 
 				target = isInstanceOf(target, DomElement) ? target : new DomElement(target);
 
-				if(target && (target = target.element)) {
+				if(target && (target = target.node)) {
 					target.parentNode.insertBefore(buildFragment(self.elements), target);
 				}
 
@@ -169,7 +208,7 @@
 
 				target = isInstanceOf(target, DomElement) ? target : new DomElement(target);
 
-				if(target && (target = target.element)) {
+				if(target && (target = target.node)) {
 					fragment = buildFragment(self.elements);
 
 					(sibling = target.nextSibling) ? target.parentNode.insertBefore(fragment, sibling) : target.parentNode.appendChild(fragment);
@@ -192,21 +231,13 @@
 
 				return self;
 			},
-			remove: function(index) {
+			detach: function() {
 				var self     = this,
 					elements = self.elements,
-					i, element;
+					i = 0, element;
 
-				if((index || index === 0) && (element = self.elements[index])) {
-					element.remove();
-					elements.splice(index, 1);
-				} else {
-					i = elements.length - 1;
-
-					for(; element = elements[i]; i--) {
-						element.remove();
-						elements.pop();
-					}
+				for(; element = elements[i]; i++) {
+					element.detach();
 				}
 
 				return self;
@@ -228,5 +259,5 @@
 		return base.extend(DomCollection);
 	}
 
-	provide([ '/demand/validator/isObject', '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', '../base', './element', '../function/descriptor/generate' ], definition);
+	provide([ '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', '../base', './element', '../function/descriptor/generate' ], definition);
 }(document));
