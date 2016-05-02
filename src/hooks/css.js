@@ -17,6 +17,8 @@
 (function(getComputedStyle) {
 	'use strict';
 
+	var regexMatchImportant = /\s*!important$/;
+
 	function definition(getCssProperty) {
 		var storage = {
 				general: {
@@ -24,7 +26,11 @@
 						return getComputedStyle(element, null).getPropertyValue(property[0]);
 					},
 					set: function(element, property, value) {
-						element.style[property[1]] = value;
+						if(value.replace) {
+							element.style.setProperty(property[0], value.replace(regexMatchImportant, '') || value, regexMatchImportant.test(value) ? 'important' : '');
+						} else {
+							element.style[property[1]] = value;
+						}
 					}
 				}
 			};
