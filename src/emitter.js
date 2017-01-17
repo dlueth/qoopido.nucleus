@@ -31,13 +31,17 @@
 			var prototype = object,
 				keys      = [],
 				names, i, name;
-
-			while(prototype !== objectPrototype) {
-				for(names = objectGetOwnPropertyNames(prototype), i = 0; name = names[i]; i++) {
-					keys.indexOf(name) === -1 && keys.push(name);
+			
+			try {
+				while(prototype !== objectPrototype) {
+					for(names = objectGetOwnPropertyNames(prototype), i = 0; name = names[i]; i++) {
+						keys.indexOf(name) === -1 && keys.push(name);
+					}
+					
+					prototype = prototype.__proto__;
 				}
-
-				prototype = prototype.__proto__;
+			} catch(error) {
+				// required for IE compatibility
 			}
 
 			return keys;
