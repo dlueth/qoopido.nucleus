@@ -19,6 +19,8 @@
  * @require ./function/unique/uuid
  */
 
+/* global ArrayBuffer */
+
 (function() {
 	'use strict';
 
