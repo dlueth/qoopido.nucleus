@@ -31,23 +31,24 @@ module.exports = {
 	strings: {
 		banner: {
 			min: [
-				"/*! {{gulp:module}} {{gulp:package.version}} | {{gulp:package.homepage}} | (c) {{gulp:date.year}} {{gulp:package.author.name}} */",
-				""
-			].join('\n'),
+					 "/**! {{gulp:package.title}} {{gulp:package.version} | {{gulp:package.homepage}} | (c) {{gulp:date.year}} {{gulp:package.author.name}} ({{gulp:package.license}}) */",
+					 ""
+				 ].join('\n'),
 			max: [
-				"/*!",
-				"* {{gulp:module}}",
-				"* {{gulp:package.title}}",
-				"*",
-				"* version: {{gulp:package.version}}",
-				"* date:    {{gulp:date.year}}-{{gulp:date.month}}-{{gulp:date.day}}",
-				"* author:  {{gulp:package.author.name}} <{{gulp:package.author.email}}>",
-				"* website: {{gulp:package.homepage}}",
-				"*",
-				"* Copyright (c) {{gulp:date.year}} {{gulp:package.author.name}}",
-				"*/",
-				""
-			].join('\n')
+					 "/**!",
+					 " * {{gulp:package.title}}",
+					 " *",
+					 " * version: {{gulp:package.version}}",
+					 " * module:  {{gulp:module}}",
+					 " * date:    {{gulp:date.year}}-{{gulp:date.month}}-{{gulp:date.day}}",
+					 " * author:  {{gulp:package.author.name}} <{{gulp:package.author.email}}>",
+					 " * website: {{gulp:package.homepage}}",
+					 " * license: {{gulp:package.license}}",
+					 " *",
+					 " * Copyright (c) {{gulp:date.year}} {{gulp:package.author.name}}",
+					 " */",
+					 ""
+				 ].join('\n')
 		}
 	}
 };

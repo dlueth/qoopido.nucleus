@@ -44,7 +44,7 @@ function getConfig() {
 }
 
 function transform(content, file) {
-	var result   = config.strings.banner.min + content,
+	var result   = content,
 		relative = file.path.replace(regexMatchBase, ''),
 		i = 0, item;
 
