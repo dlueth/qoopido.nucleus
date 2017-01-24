@@ -29,8 +29,13 @@ ajv-keywords@^1.0.0:
   resolved "https://registry.yarnpkg.com/ajv-keywords/-/ajv-keywords-1.5.1.tgz#314dd0a4b3368fad3dfcdc54ede6171b886daf3c"
 
 ajv@^4.7.0:
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
   version "4.11.3"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.11.3.tgz#ce30bdb90d1254f762c75af915fb3a63e7183d22"
+=======
+  version "4.11.2"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-4.11.2.tgz#f166c3c11cbc6cb9dcc102a5bcfe5b72c95287e6"
+>>>>>>> update dev-dependencies
   dependencies:
     co "^4.6.0"
     json-stable-stringify "^1.0.1"
@@ -188,6 +193,7 @@ atob@~1.1.0:
   resolved "https://registry.yarnpkg.com/atob/-/atob-1.1.3.tgz#95f13629b12c3a51a5d215abdce2aa9f32f80773"
 
 autoprefixer@^6.4.0:
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
   version "6.7.5"
   resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-6.7.5.tgz#50848f39dc08730091d9495023487e7cc21f518d"
   dependencies:
@@ -196,6 +202,16 @@ autoprefixer@^6.4.0:
     normalize-range "^0.1.2"
     num2fraction "^1.2.2"
     postcss "^5.2.15"
+=======
+  version "6.7.0"
+  resolved "https://registry.yarnpkg.com/autoprefixer/-/autoprefixer-6.7.0.tgz#88992cf04df141e7b8293550f2ee716c565d1cae"
+  dependencies:
+    browserslist "~1.6.0"
+    caniuse-db "^1.0.30000613"
+    normalize-range "^0.1.2"
+    num2fraction "^1.2.2"
+    postcss "^5.2.11"
+>>>>>>> update dev-dependencies
     postcss-value-parser "^3.2.3"
 
 aws-sign2@~0.6.0:
@@ -276,12 +292,21 @@ browserslist@^1.0.0, browserslist@~1.3.4:
   dependencies:
     caniuse-db "^1.0.30000525"
 
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
 browserslist@^1.7.5:
   version "1.7.5"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-1.7.5.tgz#eca4713897b51e444283241facf3985de49a9e2b"
   dependencies:
     caniuse-db "^1.0.30000624"
     electron-to-chromium "^1.2.3"
+=======
+browserslist@~1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-1.6.0.tgz#85fb7c993540d3fda31c282baf7f5aee698ac9ee"
+  dependencies:
+    caniuse-db "^1.0.30000613"
+    electron-to-chromium "^1.2.0"
+>>>>>>> update dev-dependencies
 
 buffer-shims@^1.0.0:
   version "1.0.0"
@@ -341,9 +366,15 @@ camelcase@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-3.0.0.tgz#32fc4b9fcdaf845fcdf7e73bb97cac2261f0ab0a"
 
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
 caniuse-db@^1.0.30000525, caniuse-db@^1.0.30000624, caniuse-db@~1.0.30000492:
   version "1.0.30000626"
   resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000626.tgz#44363dc86857efaf758fea9faef6a15ed93d8f33"
+=======
+caniuse-db@^1.0.30000525, caniuse-db@^1.0.30000613, caniuse-db@~1.0.30000492:
+  version "1.0.30000613"
+  resolved "https://registry.yarnpkg.com/caniuse-db/-/caniuse-db-1.0.30000613.tgz#639133b7a5380c1416f9701d23d54d093dd68299"
+>>>>>>> update dev-dependencies
 
 caseless@~0.11.0:
   version "0.11.0"
@@ -659,9 +690,15 @@ ee-first@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ee-first/-/ee-first-1.1.1.tgz#590c61156b0ae2f4f0255732a158b266bc56b21d"
 
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
 electron-to-chromium@^1.2.3:
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.2.3.tgz#4b4d04d237c301f72e2d15c2137b2b79f9f5ab76"
+=======
+electron-to-chromium@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.2.0.tgz#3bd7761f85bd4163602259ae6c7ed338050b17e7"
+>>>>>>> update dev-dependencies
 
 end-of-stream@~0.1.5:
   version "0.1.5"
@@ -751,8 +788,13 @@ escope@^3.6.0:
     estraverse "^4.1.1"
 
 eslint@^3.0.0:
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
   version "3.16.1"
   resolved "https://registry.yarnpkg.com/eslint/-/eslint-3.16.1.tgz#9bc31fc7341692cf772e80607508f67d711c5609"
+=======
+  version "3.14.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-3.14.0.tgz#2c617e5f782fda5cbee5bc8be7ef5053af8e63a3"
+>>>>>>> update dev-dependencies
   dependencies:
     babel-code-frame "^6.16.0"
     chalk "^1.1.3"
@@ -1749,8 +1791,13 @@ js-base64@^2.1.5, js-base64@^2.1.9:
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-2.1.9.tgz#f0e80ae039a4bd654b5f281fc93f04a914a7fcce"
 
 js-tokens@^3.0.0:
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.1.tgz#08e9f132484a2c45a30907e9dc4d5567b7f114d7"
+=======
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-3.0.0.tgz#a2f2a969caae142fb3cd56228358c89366957bd1"
+>>>>>>> update dev-dependencies
 
 js-yaml@^3.5.1:
   version "3.8.1"
@@ -2076,8 +2123,15 @@ map-stream@~0.1.0:
   resolved "https://registry.yarnpkg.com/map-stream/-/map-stream-0.1.0.tgz#e56aa94c4c8055a16404a0674b78f215f7c8e194"
 
 math-expression-evaluator@^1.2.14:
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
   version "1.2.16"
   resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.16.tgz#b357fa1ca9faefb8e48d10c14ef2bcb2d9f0a7c9"
+=======
+  version "1.2.15"
+  resolved "https://registry.yarnpkg.com/math-expression-evaluator/-/math-expression-evaluator-1.2.15.tgz#38dc5f0194c5bf5ff1c690ad4c4b64df71ac0187"
+  dependencies:
+    lodash.indexof "^4.0.5"
+>>>>>>> update dev-dependencies
 
 media-typer@0.3.0:
   version "0.3.0"
@@ -2571,9 +2625,15 @@ postcss-vmin@^2.0.0:
   dependencies:
     postcss "^5.0.0"
 
+<<<<<<< 6ded658afcd74a0bc1feb324d77193060ef7bc2c
 postcss@^5.0.0, postcss@^5.0.2, postcss@^5.0.4, postcss@^5.2.15:
   version "5.2.15"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-5.2.15.tgz#a9e8685e50e06cc5b3fdea5297273246c26f5b30"
+=======
+postcss@^5.0.0, postcss@^5.0.2, postcss@^5.0.4, postcss@^5.2.11:
+  version "5.2.11"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-5.2.11.tgz#ff29bcd6d2efb98bfe08a022055ec599bbe7b761"
+>>>>>>> update dev-dependencies
   dependencies:
     chalk "^1.1.3"
     js-base64 "^2.1.9"
