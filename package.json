@@ -16,8 +16,8 @@
     "url": "https://github.com/dlueth/qoopido.nucleus/issues"
   },
   "license": "MIT",
-  "main": "dist/base.js",
-  "filename": "base.js",
+  "main": "dist/emitter.js",
+  "filename": "emitter.js",
   "autoupdate": {
     "source": "git",
     "target": "git://github.com/dlueth/qoopido.nucleus.git",
