@@ -1,16 +1,4 @@
 /**
- * Qoopido component/sense
- *
- * Provides facilities to register to media queries matching/unmatching
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
  * @require ../emitter
  *
  * @polyfill ../polyfill/window/matchmedia
@@ -23,7 +11,7 @@
 		var storage = {};
 
 		function ComponentSense(query) {
-			var self = Emitter.prototype.constructor.call(this),
+			var self = this.parent.constructor.call(this),
 				mql  = matchMedia(query);
 
 			storage[self.uuid] = mql;
@@ -45,7 +33,7 @@
 			}
 		};
 
-		return Emitter.extend(ComponentSense);
+		return ComponentSense.extends(Emitter);
 	}
 
 	provide([ '../emitter', global.matchMedia || '../polyfill/window/matchmedia' ], definition);

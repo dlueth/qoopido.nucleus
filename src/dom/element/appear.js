@@ -1,20 +1,7 @@
 /**
- * Qoopido dom/element/appear
- *
- * React on elements entering, leaving or nearing the visible are of the browser window
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
- * @use /demand/validator/isObject
- * @use /demand/validator/isTypeOf
- *
  * @require ../element
+ * @require ../../function/merge
+ * @require ../../function/debounce
  */
 
 (function(global, document, setInterval, undefined) {
@@ -32,8 +19,47 @@
 			elements         = [],
 			EVENTS_RESIZE    = 'resize orientationchange',
 			EVENT_APPEAR     = 'appear',
-			EVENT_DISAPPEAR  = 'disappear',
-			prototype;
+			EVENT_DISAPPEAR  = 'disappear';
+
+		window.on(EVENTS_RESIZE, functionDebounce(updateViewport));
+		updateViewport();
+
+		setInterval(function() {
+			var i = 0, element, properties, settings, state;
+
+			for(; element = elements[i]; i++) {
+				properties = storage[element.uuid];
+				settings   = properties.settings;
+
+				if(!settings.visibility || element.isVisible()) {
+					state = check.call(element);
+
+					if(state !== properties.state) {
+						switch(state) {
+							case 0:
+								element.emit(EVENT_DISAPPEAR, { priority: 1 });
+
+								break;
+							case 1:
+								element.emit(properties.state <= 0 ? EVENT_APPEAR : EVENT_DISAPPEAR, { priority: 2 });
+
+								break;
+							case 2:
+								element.emit(EVENT_APPEAR, { priority: 1 });
+
+								break;
+						}
+
+						properties.state = state;
+					}
+
+					if(!settings.recur && state === 2) {
+						elements.splice(i, 1);
+						i--;
+					}
+				}
+			}
+		}, 1000 / 30);
 
 		function updateViewport() {
 			viewport.left   = 0;
@@ -84,8 +110,7 @@
 		}
 
 		function DomElementAppear(element, settings) {
-			var self = DomElement.prototype.constructor.call(this, element),
-				uuid = self.uuid;
+			var self = this.parent.constructor.call(this, element);
 
 			settings = functionMerge({}, DomElementAppear.settings, settings);
 
@@ -93,7 +118,7 @@
 				delete settings.threshold;
 			}
 
-			storage[uuid] = {
+			storage[self.uuid] = {
 				settings:   settings,
 				boundaries: {},
 				state:      -1
@@ -107,55 +132,14 @@
 			return self;
 		}
 
-		prototype = DomElement.extend(DomElementAppear);
-		prototype.settings = {
+		DomElementAppear.settings = {
 			threshold:  'auto',
 			recur:      true,
 			auto:       1,
 			visibility: true
 		};
 
-		window.on(EVENTS_RESIZE, functionDebounce(updateViewport));
-		updateViewport();
-
-		setInterval(function() {
-			var i = 0, element, properties, settings, state;
-
-			for(; element = elements[i]; i++) {
-				properties = storage[element.uuid];
-				settings   = properties.settings;
-
-				if(!settings.visibility || element.isVisible()) {
-					state = check.call(element);
-
-					if(state !== properties.state) {
-						switch(state) {
-							case 0:
-								element.emit(EVENT_DISAPPEAR, { priority: 1 });
-
-								break;
-							case 1:
-								element.emit(properties.state <= 0 ? EVENT_APPEAR : EVENT_DISAPPEAR, { priority: 2 });
-
-								break;
-							case 2:
-								element.emit(EVENT_APPEAR, { priority: 1 });
-
-								break;
-						}
-
-						properties.state = state;
-					}
-
-					if(!settings.recur && state === 2) {
-						elements.splice(i, 1);
-						i--;
-					}
-				}
-			}
-		}, 1000 / 30);
-
-		return prototype;
+		return DomElementAppear.extends(DomElement);
 	}
 
 	provide([ '../element', '../../function/merge', '../../function/debounce' ], definition);

@@ -1,28 +1,15 @@
 /**
- * Qoopido dom/collection
- *
- * Provides additional methods for DOM element collections
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
  * @use /demand/validator/isTypeOf
  * @use /demand/validator/isInstanceOf
+ * @use /demand/class/descriptor
  *
- * @require ../base
  * @require ../element
- * @require ../function/descriptor/generate
  */
 
 (function(document) {
 	'use strict';
 
-	function definition(isTypeOf, isInstanceOf, base, DomElement, functionDescriptorGenerate) {
+	function definition(isTypeOf, isInstanceOf, Descriptor, DomElement) {
 		var arrayPrototypeSlice  = Array.prototype.slice,
 			objectDefineProperty = Object.defineProperty;
 
@@ -90,8 +77,8 @@
 		function DomCollection(elements) {
 			var self = this;
 
-			objectDefineProperty(self, 'elements', functionDescriptorGenerate([]));
-			objectDefineProperty(self, 'nodes', functionDescriptorGenerate([]));
+			objectDefineProperty(self, 'elements', new Descriptor([]));
+			objectDefineProperty(self, 'nodes', new Descriptor([]));
 
 			if(elements) {
 				self.add(elements);
@@ -256,8 +243,8 @@
 			}
 		};
 
-		return base.extend(DomCollection);
+		return DomCollection;
 	}
 
-	provide([ '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', '../base', './element', '../function/descriptor/generate' ], definition);
+	provide([ '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', '/demand/class/descriptor', './element' ], definition);
 }(document));
