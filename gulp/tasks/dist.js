@@ -29,7 +29,7 @@ gulp.task(id + ':build', function() {
 		.pipe(plugins.plumber({ errorHandler: shared.handleError}))
 		.pipe(plugins.uglify({ preserveComments: 'none' }))
 		.pipe(plugins.insert.transform(shared.transform))
-		.pipe(plugins.chmod(644))
+		.pipe(plugins.chmod(shared.rights))
 		.pipe(plugins.size({ showFiles: true, gzip: true }))
 		.pipe(plugins.sourcemaps.write('.'))
 		.pipe(gulp.dest(task.dest));

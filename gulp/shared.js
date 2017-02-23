@@ -8,6 +8,23 @@ var path                    = require('path'),
 	regexDateMonth          = new RegExp('{{gulp:date.month}}', 'g'),
 	regexDateDay            = new RegExp('{{gulp:date.day}}', 'g'),
 	regexDateTime           = new RegExp('{{gulp:date.time}}', 'g'),
+	rights                  = {
+		owner: {
+			read: true,
+			write: true,
+			execute: false
+		},
+		group: {
+			read: true,
+			write: false,
+			execute: false
+		},
+		others: {
+			read: true,
+			write: false,
+			execute: false
+		}
+	},
 	package, pattern;
 
 function handleError(error) {
@@ -95,5 +112,6 @@ module.exports = {
 	handleError: handleError,
 	getPackage:  getPackage,
 	getConfig:   getConfig,
-	transform:   transform
+	transform:   transform,
+	rights:      rights
 };

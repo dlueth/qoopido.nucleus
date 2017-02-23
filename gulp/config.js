@@ -6,32 +6,6 @@ module.exports = {
 				"bower.json"
 			]
 		},
-		"site": {
-			watch: [
-				"site/**/*",
-				"!site/assets/css/src/**/*.less",
-				"!site/assets/css/dist/**/*.css",
-				"!site/assets/js/src/**/*.js",
-				"!site/assets/js/dist/**/*.js",
-				"!site/assets/images/src/**/*",
-				"!site/assets/images/dist/**/*"
-			]
-		},
-		"site:less": {
-			watch: "site/assets/css/src/**/*.less",
-			clean: "site/assets/css/dist/**/*",
-			dest:  "site/assets/css/dist"
-		},
-		"site:javascript": {
-			watch: "site/assets/js/src/**/*.js",
-			clean: "site/assets/js/dist/**/*",
-			dest:  "site/assets/js/dist"
-		},
-		"site:images": {
-			watch: "site/assets/images/src/**/*",
-			clean: "site/assets/images/dist/**/*",
-			dest:  "site/assets/images/dist"
-		},
 		"dist": {
 			watch: "src/**/*.js",
 			clean: "dist/**/*",
