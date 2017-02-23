@@ -1,7 +1,0 @@
-demand('/nucleus/dom/element')
-  .then(function(DomElement) {
-    new DomElement('&lt;div /&gt;', { [attributes] }, { [styles] })
-      .setContent( ... )
-      .on('click', function(event, details) { ... })
-      .appendTo('body');
-  });

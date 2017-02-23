@@ -1,7 +1,0 @@
-demand('/nucleus/task')
-  .then(function(Task) {
-    new Task(function() { ... })
-      .then(
-        function(result) { ... }
-      );
-  });

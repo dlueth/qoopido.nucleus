@@ -1,5 +1,0 @@
-demand('/nucleus/support/test/element/canvas')
-  .then(function(supportTestElementCanvas) {
-    supportTestElementCanvas
-      .then(function() { ... })
-  });
