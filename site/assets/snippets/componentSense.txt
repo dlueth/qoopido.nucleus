@@ -1,5 +1,0 @@
-demand('/nucleus/component/sense')
-  .then(function(componentSense) {
-    new componentSense('screen and (min-width: 1000px)')
-      .on('match', function(event) { ... });
-  });

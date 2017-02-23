@@ -1,6 +1,0 @@
-demand('/nucleus/component/iterator')
-  .then(function(ComponentIterator) {
-    new ComponentIterator()
-      .on('preSeek postSeek', function(event) { ... })
-      .setData( [array] );
-  });

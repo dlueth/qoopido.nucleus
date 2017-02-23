@@ -1,6 +1,0 @@
-demand('/nucleus/transport/xhr')
-  .then(function(TransportXhr) {
-    new transportXhr( [url] )
-      .get()
-      .then(function(response) { ... });
-  });

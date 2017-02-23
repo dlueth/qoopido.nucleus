@@ -80,14 +80,14 @@
 			}
 
 			xhr.onprogress = function() {};
-			xhr.ontimeout  = xhr.onerror = xhr.onabort = function() { deferred.reject(); };
+			xhr.ontimeout  = xhr.onerror = xhr.onabort = function() { deferred.reject(xhr); };
 			xhr.onload     = function() {
 				timeout = clearTimeout(timeout);
 
 				if(!('status' in xhr) || xhr.status === 200) {
-					deferred.resolve(xhr.responseText);
+					deferred.resolve(xhr.responseText, xhr);
 				} else {
-					deferred.reject();
+					deferred.reject(xhr);
 				}
 			};
 

@@ -1,9 +1,0 @@
-function definition(Emitter) {
-  function Module() { ... }
-
-  Module.prototype = { ... };
-
-  return Emitter.extend(Module)
-}
-
-provide([ '/nucleus/emitter' ], definition);
