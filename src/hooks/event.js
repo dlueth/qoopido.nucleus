@@ -1,21 +1,11 @@
 /**
- * Qoopido hooks/event
- *
- * Provides event hooks
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
+ * @use /demand/function/iterate
  */
 
 (function(global, document, undefined) {
 	'use strict';
 
-	function definition() {
+	function definition(iterate) {
 		var NULL    = null,
 			storage = {
 				general: {
@@ -107,10 +97,9 @@
 		}
 
 		function process(event, originalEvent) {
-			var id, hook, isMatch;
+			var isMatch;
 
-			for(id in storage) {
-				hook    = storage[id];
+			iterate(storage, function(id, hook) {
 				isMatch = !hook.match || hook.match.test(originalEvent.type);
 
 				if(isMatch) {
@@ -126,11 +115,11 @@
 						event.delegate = hook.delegate;
 					}
 				}
-			}
+			});
 		}
 
 		return { add: add, get: get, process: process };
 	}
 
-	provide(definition);
+	provide([ '/demand/function/iterate' ], definition);
 }(this, document));

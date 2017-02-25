@@ -1,50 +1,45 @@
-/**
- * Qoopido base
- *
- * Provides the basic object inheritance and extension mechanism
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
- * @require ./function/descriptor/generate
- */
-
 (function() {
 	'use strict';
 
-	function definition(functionDescriptorGenerate) {
-		var objectCreate                   = Object.create,
-			objectDefineProperty           = Object.defineProperty,
-			objectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
-			objectGetOwnPropertyNames      = Object.getOwnPropertyNames;
-		
-		function base() {}
+	function definition() {
+		var object                         = Object,
+			objectCreate                   = object.create,
+			objectGetOwnPropertyNames      = object.getOwnPropertyNames,
+			objectGetOwnPropertyDescriptor = object.getOwnPropertyDescriptor;
 
-		base.extend = function(fn) {
-			var parent     = this,
-				source     = fn.prototype,
-				properties = {};
+		function ClassDescriptor(value, writable, configurable, enumerable) {
+			return {
+				__proto__:    null,
+				value:        value,
+				enumerable:   !!enumerable,
+				configurable: !!configurable,
+				writable:     !!writable
+			};
+		}
 
-			objectGetOwnPropertyNames(source).forEach(function(property) {
-				properties[property] = objectGetOwnPropertyDescriptor(source, property);
-			});
+		object.defineProperty(Function.prototype, 'extends', new ClassDescriptor(function(parent) {
+			var self       = this,
+				prototype  = self.prototype,
+				properties = {},
+				names      = objectGetOwnPropertyNames(prototype),
+				i = 0, property;
 
-			properties['constructor'] = functionDescriptorGenerate(fn);
+			parent = parent.prototype || parent;
 
-			fn.prototype = objectCreate(parent.prototype || parent, properties);
+			for(; (property = names[i]); i++) {
+				properties[property] = objectGetOwnPropertyDescriptor(prototype, property);
+			}
 
-			!fn.final && (objectDefineProperty(fn, 'extend', functionDescriptorGenerate(parent.extend, true)));
+			properties.constructor = new ClassDescriptor(self);
+			properties.parent      = new ClassDescriptor(parent);
 
-			return fn;
-		};
+			self.prototype = objectCreate(parent, properties);
 
-		return base;
+			return self;
+		}));
+
+		return true;
 	}
 
-	provide([ './function/descriptor/generate' ], definition);
+	provide(definition);
 }());

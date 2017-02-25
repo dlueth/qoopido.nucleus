@@ -1,36 +1,24 @@
 /**
- * Qoopido function/merge
- *
- * Function to deep merge any number of data structures. First argument is the target and will be modified!
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
  * @use /demand/validator/isObject
+ * @use /demand/function/iterate
  */
 
 (function(undefined) {
 	'use strict';
 
-	function definition(isObject) {
+	function definition(isObject, iterate) {
 		return function functionMerge() {
 			var target = arguments[0],
-				i = 1, properties, property, targetProperty, targetPropertyIsObject, sourceProperty;
+				i = 1, properties, targetProperty, targetPropertyIsObject;
 
 			for(; (properties = arguments[i]) !== undefined; i++) {
-				for(property in properties) {
+				iterate(properties, function(property, sourceProperty) {
 					targetProperty = target[property];
-					sourceProperty = properties[property];
 
 					if(sourceProperty !== undefined) {
 						if(isObject(sourceProperty)) {
 							targetPropertyIsObject = isObject(targetProperty);
-							
+
 							if(sourceProperty.length !== undefined) {
 								targetProperty = (targetPropertyIsObject && targetProperty.length !== undefined) ? targetProperty : [];
 							} else {
@@ -42,12 +30,12 @@
 							target[property] = sourceProperty;
 						}
 					}
-				}
+				});
 			}
 
 			return target;
 		};
 	}
 
-	provide([ '/demand/validator/isObject' ], definition);
+	provide([ '/demand/validator/isObject', '/demand/function/iterate' ], definition);
 }());

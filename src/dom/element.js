@@ -1,32 +1,20 @@
 /**
- * Qoopido dom/element
- *
- * Provides additional methods for DOM elements
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
  * @use /demand/validator/isObject
  * @use /demand/validator/isInstanceOf
  * @use /demand/validator/isTypeOf
+ * @use /demand/function/uuid
+ * @use /demand/function/iterate
+ * @use /demand/class/descriptor
  *
- * @require ../base
  * @require ./event
- * @require ../hook/css
- * @require ../function/descriptor/generate
- * @require ../function/unique/uuid
- * @require ../function/unique/uuid
+ * @require ../hooks/css
+ * @require ../support/method
  */
 
 (function(global, document) {
 	'use strict';
 
-	function definition(isObject, isInstanceOf, isTypeOf, base, Event, hooksCss, supportMethod, functionDescriptorGenerate, functionUniqueUuid) {
+	function definition(isObject, isInstanceOf, isTypeOf, generateUuid, iterate, Descriptor, Event, hooksCss, supportMethod) {
 		var //shortcuts
 			documentBody             = document.body || document.getElementsByTagName('body')[0],
 			arrayPrototypeConcat     = Array.prototype.concat,
@@ -56,10 +44,10 @@
 				event;
 
 			event = document.createEvent('CustomEvent');
-			event.initCustomEvent(type, (type === 'load') ? false : true, true, detail);
+			event.initCustomEvent(type, type !== 'load', true, detail);
 
 			if(uuid) {
-				event._quid      = uuid;
+				event.uuid       = uuid;
 				event.isDelegate = true;
 			}
 
@@ -112,37 +100,6 @@
 			return false;
 		}
 
-		function DomElement(element, attributes, styles) {
-			var self = this,
-				uuid;
-
-			element = resolveElement(element);
-			uuid    = element._quid;
-
-			if(!uuid) {
-				uuid           = functionUniqueUuid();
-				listener[uuid] = {};
-
-				objectDefineProperty(element, '_quid', functionDescriptorGenerate(uuid));
-			}
-
-			objectDefineProperties(self, {
-				uuid: functionDescriptorGenerate(uuid),
-				type: functionDescriptorGenerate(element === global ? '#window' : element.nodeName),
-				node: functionDescriptorGenerate(element)
-			});
-
-			if(isObject(attributes)) {
-				self.setAttributes(attributes);
-			}
-
-			if(isObject(styles)) {
-				self.setStyles(styles);
-			}
-
-			return self;
-		}
-
 		function getSiblings(pointer, method, selector, limit, strict) {
 			var multiple = !(limit && limit === 1),
 				siblings = multiple ? [] : false;
@@ -191,6 +148,37 @@
 			}
 
 			return parents
+		}
+
+		function DomElement(element, attributes, styles) {
+			var self = this.parent.constructor.call(this),
+				uuid;
+
+			element = resolveElement(element);
+			uuid    = element.uuid;
+
+			if(!uuid) {
+				uuid           = generateUuid();
+				listener[uuid] = {};
+
+				objectDefineProperty(element, 'uuid', new Descriptor(uuid));
+			}
+
+			objectDefineProperties(self, {
+				uuid: new Descriptor(uuid),
+				type: new Descriptor(element === global ? '#window' : element.nodeName),
+				node: new Descriptor(element)
+			});
+
+			if(isObject(attributes)) {
+				self.setAttributes(attributes);
+			}
+
+			if(isObject(styles)) {
+				self.setStyles(styles);
+			}
+
+			return self;
 		}
 
 		DomElement.prototype = {
@@ -316,7 +304,7 @@
 						}
 					}
 				} else if(regexMatchChildSeclector.test(selector)) {
-					uuid = self._quid;
+					uuid = self.uuid;
 
 					self.setAttribute('nucleus-uuid', uuid);
 
@@ -372,14 +360,11 @@
 				return self;
 			},
 			setAttributes: function(attributes) {
-				var self = this,
-					attribute;
+				var self = this;
 
-				if(isObject(attributes) && !attributes.length) {
-					for(attribute in attributes) {
-						self.setAttribute(attribute, attributes[attribute]);
-					}
-				}
+				iterate(attributes, function(attribute, value) {
+					self.setAttribute(attribute, value);
+				});
 
 				return self;
 			},
@@ -413,14 +398,11 @@
 				return self;
 			},
 			setStyles: function(properties) {
-				var self = this,
-					property;
+				var self = this;
 
-				if(isObject(properties) && !properties.length) {
-					for(property in properties) {
-						hooksCss.process('set', self.node, property, properties[property]);
-					}
-				}
+				iterate(properties, function(property, value) {
+					hooksCss.process('set', self.node, property, value);
+				});
 
 				return self;
 			},
@@ -574,7 +556,7 @@
 				var self     = this,
 					delegate = arguments.length > 2 ? arguments[1] : NULL,
 					fn       = delegate ? arguments[2] : arguments[1],
-					uuid     = fn._quid || (fn._quid = functionUniqueUuid()),
+					uuid     = fn.uuid || (fn.uuid = generateUuid()),
 					i = 0, event;
 
 				events = events.split(regexMatchSpaces);
@@ -588,7 +570,7 @@
 
 							if(!event.isPropagationStopped) {
 								delegateTo  = event.delegate;
-								event._quid = functionUniqueUuid();
+								event.uuid = generateUuid();
 
 								if(!delegate || matchesDelegate(event, delegate)) {
 									fn.call(event.currentTarget, event, event.originalEvent.detail);
@@ -621,7 +603,7 @@
 						fn.call(this, event, event.originalEvent.detail);
 					};
 
-				fn._quid = handler._quid = functionUniqueUuid();
+				fn.uuid = handler.uuid = generateUuid();
 
 				if(delegate) {
 					self.on(events, delegate, handler);
@@ -639,7 +621,7 @@
 				events = events.split(' ');
 
 				for(; event = events[i]; i++) {
-					id      = fn._quid && event + '-' + fn._quid || NULL;
+					id      = fn.uuid && event + '-' + fn.uuid || NULL;
 					handler = id && listener[self.uuid][id] || NULL;
 
 					if(handler) {
@@ -662,8 +644,8 @@
 			}
 		};
 
-		return base.extend(DomElement);
+		return DomElement;
 	}
 
-	provide([ '/demand/validator/isObject', '/demand/validator/isInstanceOf', '/demand/validator/isTypeOf', '../base', './event', '../hooks/css', '../support/method', '../function/descriptor/generate', '../function/unique/uuid' ], definition);
+	provide([ '/demand/validator/isObject', '/demand/validator/isInstanceOf', '/demand/validator/isTypeOf', '/demand/function/uuid', '/demand/function/iterate', '/demand/class/descriptor', './event', '../hooks/css', '../support/method' ], definition);
 }(this, document));

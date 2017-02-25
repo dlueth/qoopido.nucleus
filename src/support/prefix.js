@@ -1,13 +1,5 @@
 /**
- * Qoopido support/prefix
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
+ * @use /demand/function/iterate
  *
  * @require ../function/string/ucfirst
  */
@@ -15,23 +7,22 @@
 (function(document) {
 	'use strict';
 
-	function definition(functionStringUcfirst) {
+	function definition(iterate, functionStringUcfirst) {
 		var styles           = document.createElement('div').style,
 			regexMatchPrefix = /^(Moz|WebKit|Khtml|ms|O|Icab)(?=[A-Z])/,
-			prefix           = null,
-			property;
+			prefix           = null;
 
 		return function supportPrefix() {
 			if(prefix === null) {
 				prefix = false;
 
-				for(property in styles) {
+				iterate(styles, function(property) {
 					if(regexMatchPrefix.test(property)) {
 						prefix = property.match(regexMatchPrefix)[0];
 
-						break;
+						return false;
 					}
-				}
+				});
 
 				if(!prefix && 'WebkitOpacity' in styles) {
 					prefix = 'WebKit';
@@ -50,5 +41,5 @@
 		};
 	}
 
-	provide([ '../function/string/ucfirst' ], definition);
+	provide([ '/demand/function/iterate', '../function/string/ucfirst' ], definition);
 }(document));

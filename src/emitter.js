@@ -1,24 +1,11 @@
 /**
- * Qoopido emitter
- *
- * Provides mechanism to emit events and register listeners
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
- * @require ./base
- * @require ./function/unique/uuid
+ * @use /demand/abstract/uuid
  */
 
 (function(undefined) {
 	'use strict';
 
-	function definition(base, functionDescriptorGenerate, functionUniqueUuid) {
+	function definition(abstractUuid, iterate) {
 		var regexMatchExcludedMethods      = /^(_|((get|has|is)([A-Z]|$))|(on|one|off|emit)$)/,
 			objectDefineProperty           = Object.defineProperty,
 			objectGetOwnPropertyNames      = Object.getOwnPropertyNames,
@@ -34,7 +21,7 @@
 			
 			try {
 				while(prototype !== objectPrototype) {
-					for(names = objectGetOwnPropertyNames(prototype), i = 0; name = names[i]; i++) {
+					for(names = objectGetOwnPropertyNames(prototype), i = 0; (name = names[i]); i++) {
 						keys.indexOf(name) === -1 && keys.push(name);
 					}
 					
@@ -58,12 +45,13 @@
 			return descriptor;
 		}
 
-		function conceal() {
+		function wrap() {
 			var self       = this,
 				prototype  = self.constructor.prototype,
-				properties = getPropertyNames(prototype);
+				properties = getPropertyNames(prototype),
+				i = 0, property;
 
-			properties.forEach(function(property) {
+			for(; (property = properties[i]); i++) {
 				var descriptor = getPropertyDescriptor(prototype, property),
 					event;
 
@@ -84,28 +72,20 @@
 
 					objectDefineProperty(self, property, descriptor);
 				}
-			});
+			}
 		}
 
 		function Emitter() {
-			var self = this,
-				uuid = self.uuid;
+			var self = this.parent.constructor.call(this);
 
-			!uuid && (uuid = functionUniqueUuid()) && objectDefineProperty(self, 'uuid', functionDescriptorGenerate(uuid));
-
-			storage[uuid] = {};
+			storage[self.uuid] = {};
 
 			if(objectGetPrototypeOf(self) !== Emitter.prototype) {
-				conceal.call(self);
+				wrap.call(self);
 			}
-
-			return self;
 		}
 
 		Emitter.prototype = {
-			/* only for reference
-			uuid: null,
-			*/
 			on: function(events, fn) {
 				var self    = this,
 					pointer = storage[self.uuid],
@@ -156,9 +136,9 @@
 						}
 					}
 				} else {
-					for(event in self.listener) {
+					iterate(self.listener, function(event) {
 						pointer[event].length = 0;
-					}
+					});
 				}
 
 				return self;
@@ -182,8 +162,8 @@
 			}
 		};
 
-		return base.extend(Emitter);
+		return Emitter.extends(abstractUuid);
 	}
 
-	provide([ './base', './function/descriptor/generate', './function/unique/uuid' ], definition);
+	provide([ '/demand/abstract/uuid', '/demand/function/iterate' ], definition);
 }());

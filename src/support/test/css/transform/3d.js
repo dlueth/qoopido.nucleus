@@ -1,15 +1,6 @@
 /**
- * Qoopido support/test/css/transform/3d
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
  * @use /demand/pledge
+ *
  * @require ../transform
  */
 
@@ -17,7 +8,7 @@
 	'use strict';
 
 	function definition(Pledge, testTransform) {
-		var defered = Pledge.defer();
+		var deferred = Pledge.defer();
 
 		testTransform.then(
 			function(property) {
@@ -28,15 +19,15 @@
 				} catch(exception) {} // eslint-disable-line no-empty
 
 				if((/translate3d/).test(styles[property])) {
-					defered.resolve();
+					deferred.resolve();
 				} else {
-					defered.reject();
+					deferred.reject();
 				}
 			},
-			defered.reject
+			deferred.reject
 		);
 
-		return defered.pledge;
+		return deferred.pledge;
 	}
 
 	provide([ '/demand/pledge', '../transform' ], definition);
