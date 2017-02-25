@@ -1,5 +1,6 @@
 var gulp     = require('gulp'),
 	plugins  = require('gulp-load-plugins')(),
+	shared   = require('../shared'),
 	config   = require('../config'),
 	shared   = require('../shared'),
 	id       = 'bump',

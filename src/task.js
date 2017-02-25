@@ -1,31 +1,18 @@
 /**
- * Qoopido task
- *
- * Provides basic web worker abstraction
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
+ * @use /demand/abstract/uuid
  * @use /demand/pledge
  * @use /demand/validator/isInstanceOf
+ * @use /demand/function/defer
  *
- * @require ./base
  * @require ./support/method
- * @require ./function/unique/uuid
  */
 
-/* global ArrayBuffer */
-
-(function() {
+(function(global) {
 	'use strict';
 
-	function definition(Pledge, isInstanceOf, base, supportMethod, functionUniqueUuid) {
-		var NativeWorker = supportMethod('Worker'),
+	function definition(abstractUuid, Pledge, isInstanceOf, defer, supportMethod) {
+		var ArrayBuffer  = 'ArrayBuffer' in global ? ArrayBuffer : null,
+			NativeWorker = supportMethod('Worker'),
 			NativeUrl    = supportMethod('URL'),
 			NativeBlob   = supportMethod('Blob'),
 			supported    = NativeWorker && NativeUrl && NativeBlob,
@@ -47,9 +34,9 @@
 
 					thread.addEventListener('message', task.onMessage);
 					thread.addEventListener('error', task.onError);
-					thread.postMessage({ load: task.load.toString(), parameter: task.parameter }, isInstanceOf(task.parameter, ArrayBuffer) ? [ task.parameter ] : null);
+					thread.postMessage({ load: task.load.toString(), parameter: task.parameter }, ArrayBuffer && isInstanceOf(task.parameter, ArrayBuffer) ? [ task.parameter ] : null);
 				} else {
-					setTimeout(function(){
+					defer(function(){
 						try {
 							task.deferred.resolve(task.load.apply(null, task.parameter));
 						} catch(exception) {
@@ -57,7 +44,7 @@
 						}
 
 						processQueue();
-					}, 4);
+					});
 				}
 			}
 		}
@@ -74,10 +61,9 @@
 		}
 
 		function Task(load, parameter) {
-			var self     = this,
+			var self     = this.parent.constructor.call(this),
 				deferred = Pledge.defer();
 
-			self.uuid      = functionUniqueUuid();
 			self.deferred  = deferred;
 			self.load      = load;
 			self.parameter = parameter || [];
@@ -88,10 +74,8 @@
 			return deferred.pledge;
 		}
 
-
 		Task.prototype = {
 			/* only for reference
-			uuid:      null,
 			deferred:  null,
 			load:      null,
 			parameter: null,
@@ -124,8 +108,8 @@
 			}
 		}
 
-		return base.extend(Task);
+		return Task.extends(abstractUuid);
 	}
 
-	provide([ '/demand/pledge', '/demand/validator/isInstanceOf', './base', './support/method', './function/unique/uuid' ],definition);
-}());
+	provide([ '/demand/abstract/uuid', '/demand/pledge', '/demand/validator/isInstanceOf', '/demand/function/defer', './support/method' ],definition);
+}(this));

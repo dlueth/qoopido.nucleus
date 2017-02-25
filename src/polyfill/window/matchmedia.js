@@ -1,13 +1,5 @@
 /**
- * Qoopido polyfill/window/matchmedia
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
+ * @use /demand/function/iterate
  *
  * @browsers Chrome < 9, Firefox < 6, Internet Explorer < 10, Opera < 12.1, Safari < 5.1
  */
@@ -15,16 +7,15 @@
 (function(global, document, getComputedStyle) {
 	'use strict';
 
-	function definition() {
+	function definition(iterate) {
 		var id      = 'polyfill/window/matchmedia',
 			storage = {},
 			count = 0, style;
 
 		function onResize() {
-			var key, query, mql, event, i, fn;
+			var mql, event, i, fn;
 
-			for(key in storage) {
-				query = storage[key];
+			iterate(storage, function(key, query) {
 				mql   = query.mql;
 
 				if(mql.matches !== query.check()) {
@@ -42,7 +33,7 @@
 						fn.call(mql, event);
 					}
 				}
-			}
+			});
 		}
 
 		function initialize() {
@@ -121,5 +112,5 @@
 		return global.matchMedia;
 	}
 
-	provide(definition);
+	provide([ '/demand/function/iterate' ], definition);
 }(this, document, getComputedStyle));

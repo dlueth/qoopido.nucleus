@@ -1,14 +1,4 @@
 /**
- * Qoopido support/test/element/video/webm
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
  * @use /demand/pledge
  *
  * @require ../video
@@ -18,22 +8,22 @@
 	'use strict';
 
 	function definition(Pledge, testVideo) {
-		var defered = Pledge.defer();
+		var deferred = Pledge.defer();
 
 		testVideo.then(
 			function() {
 				var sample = document.createElement('video');
 
 				if(sample.canPlayType('video/webm; codecs="vp8, vorbis"')) {
-					defered.resolve();
+					deferred.resolve();
 				} else {
-					defered.reject();
+					deferred.reject();
 				}
 			},
-			defered.reject
+			deferred.reject
 		);
 
-		return defered.pledge;
+		return deferred.pledge;
 	}
 
 	provide([ '/demand/pledge', '../video' ], definition);

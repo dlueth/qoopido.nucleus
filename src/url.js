@@ -1,25 +1,11 @@
 /**
- * Qoopido url
- *
- * Provides methods handle URLs
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
- * @require ./base
- * @require ./function/descriptor/generate
- * @require ./function/unique/uuid
+ * @use /demand/abstract/uuid
  */
 
 (function(global, document) {
 	'use strict';
 
-	function definition(base, functionDescriptorGenerate, functionUniqueUuid) {
+	function definition(abstractUuid, Descriptor, iterate) {
 		var objectDefineProperties    = Object.defineProperties,
 			storage                   = {},
 			regexMatchLeadingSlash    = /^\//,
@@ -58,15 +44,15 @@
 			}
 		}
 
-		function SearchParams(uuid) {
+		function Parameter(uuid) {
 			var self = this;
 
-			objectDefineProperties(self, { uuid: functionDescriptorGenerate(uuid) });
+			objectDefineProperties(self, { uuid: new Descriptor(uuid) });
 
-			SearchParams.update.call(self);
+			Parameter.update(self);
 		}
 
-		SearchParams.prototype = {
+		Parameter.prototype = {
 			/* only for reference
 			uuid: null
 			*/
@@ -76,39 +62,38 @@
 			set: function(name, value) {
 				storage[this.uuid].parameter[name] = value;
 
-				SearchParams.serialize.call(this);
+				Parameter.serialize(this);
 			},
 			remove: function(name) {
 				delete storage[this.uuid].parameter[name];
 
-				SearchParams.serialize.call(this);
+				Parameter.serialize(this);
 			}
 		};
 
-		SearchParams.update = function() {
-			var properties = storage[this.uuid],
+		Parameter.update = function(context) {
+			var properties = storage[context.uuid],
 				parameter  = properties.parameter,
 				search     = properties.link.search.split('+').join(' '),
-				key, tokens;
+				tokens;
 
-			for(key in parameter) {
-				delete parameter[key];
-			}
+			iterate(parameter, function(property) {
+				delete parameter[property];
+			});
 
 			while(tokens = regexMatchParameter.exec(search)) {
 				parameter[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
 			}
 		};
 
-		SearchParams.serialize = function() {
-			var properties = storage[this.uuid],
+		Parameter.serialize = function(context) {
+			var properties = storage[context.uuid],
 				parameter  = properties.parameter,
-				result = '',
-				key;
+				result     = '';
 
-			for(key in parameter) {
-				result += (!result ? '?' : '&') + encodeURIComponent(key) + '=' + encodeURIComponent(parameter[key]);
-			}
+			iterate(parameter, function(property, value) {
+				result += (!result ? '?' : '&') + encodeURIComponent(property) + '=' + encodeURIComponent(value);
+			});
 
 			properties.link.search = result
 				.replace(regexMatchSpaces, '+')
@@ -117,36 +102,24 @@
 		};
 
 		function Url(url) {
-			var self      = this,
-				uuid      = functionUniqueUuid(),
-				link      = document.createElement('a');
+			var self = this.parent.constructor.call(this),
+				link = document.createElement('a');
 
-			objectDefineProperties(self, {
-				uuid:     functionDescriptorGenerate(uuid),
-				toString: {
-					value: function() { return link.toString(); },
-					enumerable: false
-				},
-				valueOf: {
-					value: function() { return link.valueOf(); },
-					enumerable: false
-				}
-			});
+			link.href = url;
 
-			storage[uuid] = {
+			storage[self.uuid] = {
 				link:      link,
 				parameter: {}
 			};
 
-			link.href         = url;
-			self.searchParams = new SearchParams(uuid);
+			objectDefineProperties(self, {
+				toString:  new Descriptor(function() { return link.toString(); }),
+				valueOf:   new Descriptor(function() { return link.valueOf(); }),
+				parameter: new Descriptor(new Parameter(self.uuid))
+			});
 		}
 
 		Url.prototype = {
-			/* only for reference
-			uuid:         null,
-			searchParams: null,
-			*/
 			get local() {
 				var value;
 
@@ -223,7 +196,7 @@
 			set search(value) {
 				setLinkProperty(this.uuid, 'search', value);
 
-				SearchParams.update.call(this);
+				Parameter.update.call(this);
 			},
 			get hash() {
 				return getLinkProperty(this.uuid, 'hash');
@@ -233,8 +206,8 @@
 			}
 		};
 
-		return base.extend(Url);
+		return Url.extends(abstractUuid);
 	}
 
-	provide([ './base', './function/descriptor/generate', './function/unique/uuid' ], definition);
+	provide([ '/demand/abstract/uuid', '/demand/descriptor', '/demand/function/iterate' ], definition);
 }(this, document));

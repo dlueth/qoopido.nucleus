@@ -1,45 +1,29 @@
 /**
- * Qoopido transport/xhr
- *
- * Provides basic XHR (AJAX) functionality
- *
- * Copyright (c) 2015 Dirk Lueth
- *
- * Dual licensed under the MIT and GPL licenses.
- *  - http://www.opensource.org/licenses/mit-license.php
- *  - http://www.gnu.org/copyleft/gpl.html
- *
- * @author Dirk Lueth <info@qoopido.com>
- *
+ * @use /demand/abstract/uuid
  * @use /demand/pledge
  * @use /demand/validator/isObject
+ * @use /demand/function/iterate
  *
- * @require ../base
  * @require ../url
  * @require ../function/merge
- * @require ../function/descriptor/generate
  */
 
-(function(global, XMLHttpRequest) {
+(function(global, XHR) {
 	'use strict';
 
-	function definition(Pledge, isObject, base, Url, functionMerge, functionDescriptorGenerate, functionUniqueUuid) {
-		var objectDefineProperty      = Object.defineProperty,
-			XHR                       = XMLHttpRequest,
-			XDR                       = 'XDomainRequest' in global &&  global.XDomainRequest || XHR,
+	function definition(abstractUuid, Pledge, isObject, iterate, Url, functionMerge) {
+		var XDR                       = 'XDomainRequest' in global &&  global.XDomainRequest || XHR,
 			regexMatchSpaces          = /%20/g,
 			regexMatchOpeningBrackets = /%5B/g,
 			regexMatchClosingBrackets = /%5D/g,
-			storage                   = {},
-			prototype;
+			storage                   = {};
 
 		function serialize(parameter) {
-			var result = '',
-				key;
+			var result = '';
 
-			for(key in parameter) {
-				result += (!result ? '' : '&') + encodeURIComponent(key) + '=' + encodeURIComponent(parameter[key]);
-			}
+			iterate(parameter, function(property, value) {
+				result += (!result ? '' : '&') + encodeURIComponent(property) + '=' + encodeURIComponent(value);
+			});
 
 			return result
 				.replace(regexMatchSpaces, '+')
@@ -47,26 +31,32 @@
 				.replace(regexMatchClosingBrackets, ']');
 		}
 
+		function checkState() {
+			if(this.readyState < 4) {
+				this.abort();
+			}
+		}
+
 		function request(method) {
-			var self       = this,
-				properties = storage[self.uuid],
-				settings   = properties.settings,
-				url        = properties.url,
-				data       = properties.data,
-				xhr        = url.local ? new XHR() : new XDR(),
-				deferred   = Pledge.defer(),
-				key, timeout;
+			var self            = this,
+				properties      = storage[self.uuid],
+				settings        = properties.settings,
+				url             = properties.url,
+				data            = properties.data,
+				xhr             = url.local ? new XHR() : new XDR(),
+				deferred        = Pledge.defer(),
+				boundCheckState = checkState.bind(xhr),
+				timeout         = settings.timeout,
+				pointer;
 
 			if(data && method === 'GET') {
-				for(key in data) {
-					url.searchParams.set(key, data[key]);
-				}
+				iterate(data, url.parameter.set);
 
 				data = null;
 			}
 
 			if(!settings.cache) {
-				url.searchParams.set('nucleus[time]', +new Date());
+				url.parameter.set('nucleus', +new Date());
 			}
 
 			if(data) {
@@ -74,15 +64,21 @@
 			}
 
 			if(isObject(settings.xhrOptions)) {
-				for(key in settings.xhrOptions) {
-					xhr[key] = settings.xhrOptions[key];
-				}
+				iterate(settings.xhrOptions, function(property, value) {
+					xhr[property] = value;
+				});
 			}
 
-			xhr.onprogress = function() {};
-			xhr.ontimeout  = xhr.onerror = xhr.onabort = function() { deferred.reject(xhr); };
+			xhr.ontimeout  = xhr.onerror = xhr.onabort = function() {
+				deferred.reject(xhr);
+			};
+			xhr.onprogress = xhr.onreadystatechange = function() {
+				clearTimeout(pointer);
+
+				pointer = setTimeout(boundCheckState, timeout);
+			};
 			xhr.onload     = function() {
-				timeout = clearTimeout(timeout);
+				pointer = clearTimeout(pointer);
 
 				if(!('status' in xhr) || xhr.status === 200) {
 					deferred.resolve(xhr.responseText, xhr);
@@ -101,40 +97,28 @@
 				}
 
 				if(isObject(settings.header)) {
-					for(key in settings.header) {
-						xhr.setRequestHeader(key, settings.header[key]);
-					}
+					iterate(settings.header, xhr.setRequestHeader);
 				}
 			}
 
 			xhr.send(data);
 
-			timeout = setTimeout(function() {
-				if(xhr.readyState < 4) {
-					xhr.abort();
-				}
-			}, settings.timeout);
+			pointer = setTimeout(boundCheckState, timeout);
 
 			return deferred.pledge;
 		}
 
 		function TransportXhr(url, data, settings) {
-			var self = this,
-				uuid = functionUniqueUuid();
+			var self = this.parent.constructor.call(this);
 
-			objectDefineProperty(self, 'uuid', functionDescriptorGenerate(uuid));
-
-			storage[uuid] = {
-				settings: functionMerge({}, prototype.settings, settings),
+			storage[self.uuid] = {
+				settings: functionMerge({}, TransportXhr.settings, settings),
 				url:      new Url(url),
 				data:     data
 			};
 		}
 
 		TransportXhr.prototype = {
-			/* only for reference
-			uuid: null,
-			*/
 			get:      function() {
 				return request.call(this, 'GET');
 			},
@@ -144,6 +128,9 @@
 			put:      function() {
 				return request.call(this, 'PUT');
 			},
+			patch:      function() {
+				return request.call(this, 'PATCH');
+			},
 			'delete': function() {
 				return request.call(this, 'DELETE');
 			},
@@ -152,8 +139,7 @@
 			}
 		};
 
-		prototype          = base.extend(TransportXhr);
-		prototype.settings = {
+		TransportXhr.settings = {
 			accept:      '*/*',
 			timeout:     8000,
 			async:       true,
@@ -165,8 +151,8 @@
 			xhrOptions:  {}
 		};
 
-		return prototype;
+		return TransportXhr.extends(abstractUuid);
 	}
 
-	provide([ '/demand/pledge', '/demand/validator/isObject', '../base', '../url', '../function/merge', '../function/descriptor/generate', '../function/unique/uuid' ], definition);
+	provide([ '/demand/abstract/uuid', '/demand/pledge', '/demand/validator/isObject', '/demand/function/iterate', '../url', '../function/merge' ], definition);
 }(this, XMLHttpRequest));
