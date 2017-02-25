@@ -8,6 +8,11 @@ engines:
       languages:
         javascript:
           mass_threshold: 110
+    exclude_fingerprints:
+    - 56287bdf67aec6bb270d7cdef3634c9d
+    - 87658f98d981b37f9bda6355d3233910
+    - 400fefac6cf7e2ff43cb31b7c26b5ae2
+    - 12f11fd2f1e39ffcdee388b83c5b50f9
   eslint:
     enabled: true
   fixme:
