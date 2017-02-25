@@ -1,3 +1,2 @@
-/*! /base 2.0.4 | http://nucleus.qoopido.com | (c) 2017 Dirk Lueth */
-!function(){"use strict";function t(t){function e(){}var r=Object.create,n=Object.defineProperty,o=Object.getOwnPropertyDescriptor,c=Object.getOwnPropertyNames;return e.extend=function(e){var i=this,p=e.prototype,u={};return c(p).forEach(function(t){u[t]=o(p,t)}),u.constructor=t(e),e.prototype=r(i.prototype||i,u),!e.final&&n(e,"extend",t(i.extend,!0)),e},e}provide(["./function/descriptor/generate"],t)}();
+!function(){"use strict";function e(){function e(e,t,r,n){return{__proto__:null,value:e,enumerable:!!n,configurable:!!r,writable:!!t}}var t=Object,r=t.create,n=t.getOwnPropertyNames,o=t.getOwnPropertyDescriptor;return t.defineProperty(Function.prototype,"extends",new e(function(t){var p,u=this,c=u.prototype,i={},a=n(c),f=0;for(t=t.prototype||t;p=a[f];f++)i[p]=o(c,p);return i.constructor=new e(u),i.parent=new e(t),u.prototype=r(t,i),u})),!0}provide(e)}();
 //# sourceMappingURL=base.js.map
