@@ -4,7 +4,7 @@
  * @use /demand/validator/isTypeOf
  * @use /demand/function/uuid
  * @use /demand/function/iterate
- * @use /demand/class/descriptor
+ * @use /demand/descriptor
  *
  * @require ./event
  * @require ../hooks/css
@@ -647,5 +647,5 @@
 		return DomElement;
 	}
 
-	provide([ '/demand/validator/isObject', '/demand/validator/isInstanceOf', '/demand/validator/isTypeOf', '/demand/function/uuid', '/demand/function/iterate', '/demand/class/descriptor', './event', '../hooks/css', '../support/method' ], definition);
+	provide([ '/demand/validator/isObject', '/demand/validator/isInstanceOf', '/demand/validator/isTypeOf', '/demand/function/uuid', '/demand/function/iterate', '/demand/descriptor', './event', '../hooks/css', '../support/method' ], definition);
 }(this, document));

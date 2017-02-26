@@ -1,0 +1,38 @@
+---
+engines:
+  csslint:
+    enabled: false
+  duplication:
+    enabled: true
+    config:
+      languages:
+        javascript:
+          mass_threshold: 110
+    exclude_fingerprints:
+    - 56287bdf67aec6bb270d7cdef3634c9d
+    - 87658f98d981b37f9bda6355d3233910
+    - 400fefac6cf7e2ff43cb31b7c26b5ae2
+    - 12f11fd2f1e39ffcdee388b83c5b50f9
+    - e75cde9a14872cba9ede255dd1774313
+    - c56c0982a136f8841e5f665155c5e7cb
+    - 61890438d8496d4d33adc97cc56f1e3e
+    - 31ecce5f84e1c5472f51f31a943593b8
+    - 984c059f3a17feda51d10700021d8aad
+    - 6e498616fc020ff30919354e7d8dcc69
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  phpmd:
+    enabled: false
+ratings:
+  paths:
+  - "src/**.js"
+exclude_paths:
+- "yarn.lock"
+- "gulpfile.js"
+- "README.md"
+- "**.json"
+- "dist/"
+- "gulp/"
+- "LICENSE"
