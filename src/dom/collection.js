@@ -1,7 +1,7 @@
 /**
  * @use /demand/validator/isTypeOf
  * @use /demand/validator/isInstanceOf
- * @use /demand/class/descriptor
+ * @use /demand/descriptor
  *
  * @require ../element
  */
@@ -246,5 +246,5 @@
 		return DomCollection;
 	}
 
-	provide([ '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', '/demand/class/descriptor', './element' ], definition);
+	provide([ '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', '/demand/descriptor', './element' ], definition);
 }(document));
