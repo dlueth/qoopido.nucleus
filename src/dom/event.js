@@ -5,7 +5,7 @@
 (function() {
 	'use strict';
 
-	function definition(base, hooksEvent) {
+	function definition(hooksEvent) {
 		function DomEvent(event) {
 			hooksEvent.process(this, event);
 		}

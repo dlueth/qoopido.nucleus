@@ -151,7 +151,7 @@
 		}
 
 		function DomElement(element, attributes, styles) {
-			var self = this.parent.constructor.call(this),
+			var self = this,
 				uuid;
 
 			element = resolveElement(element);
