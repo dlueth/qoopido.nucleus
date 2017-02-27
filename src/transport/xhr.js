@@ -97,7 +97,9 @@
 				}
 
 				if(isObject(settings.header)) {
-					iterate(settings.header, xhr.setRequestHeader);
+					iterate(settings.header, function(header, value) {
+						xhr.setRequestHeader(header, value);
+					});
 				}
 			}
 
