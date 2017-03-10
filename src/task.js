@@ -61,7 +61,7 @@
 		}
 
 		function Task(load, parameter) {
-			var self     = this.parent.constructor.call(this),
+			var self     = abstractUuid.call(this),
 				deferred = Pledge.defer();
 
 			self.deferred  = deferred;

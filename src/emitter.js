@@ -6,7 +6,7 @@
 	'use strict';
 
 	function definition(abstractUuid, iterate) {
-		var regexMatchExcludedMethods      = /^(_|((get|has|is)([A-Z]|$))|(on|one|off|emit)$)/,
+		var regexMatchExcludedMethods      = /^(_|((get|has|is)([A-Z]|$))|(on|one|off|emit|constructor)$)/,
 			objectDefineProperty           = Object.defineProperty,
 			objectGetOwnPropertyNames      = Object.getOwnPropertyNames,
 			objectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
@@ -48,10 +48,9 @@
 		function wrap() {
 			var self       = this,
 				prototype  = self.constructor.prototype,
-				properties = getPropertyNames(prototype),
-				i = 0, property;
-
-			for(; (property = properties[i]); i++) {
+				properties = getPropertyNames(prototype);
+			
+			properties.forEach(function(property) {
 				var descriptor = getPropertyDescriptor(prototype, property),
 					event;
 
@@ -72,17 +71,19 @@
 
 					objectDefineProperty(self, property, descriptor);
 				}
-			}
+			});
 		}
 
 		function Emitter() {
-			var self = this.parent.constructor.call(this);
+			var self = abstractUuid.call(this);
 
 			storage[self.uuid] = {};
 
 			if(objectGetPrototypeOf(self) !== Emitter.prototype) {
 				wrap.call(self);
 			}
+			
+			return self;
 		}
 
 		Emitter.prototype = {

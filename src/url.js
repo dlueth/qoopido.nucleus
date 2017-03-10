@@ -102,7 +102,7 @@
 		};
 
 		function Url(url) {
-			var self = this.parent.constructor.call(this),
+			var self = abstractUuid.call(this),
 				link = document.createElement('a');
 
 			link.href = url;
@@ -117,6 +117,8 @@
 				valueOf:   new Descriptor(function() { return link.valueOf(); }),
 				parameter: new Descriptor(new Parameter(self.uuid))
 			});
+			
+			return self;
 		}
 
 		Url.prototype = {

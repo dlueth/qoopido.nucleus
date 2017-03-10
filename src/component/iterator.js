@@ -26,7 +26,7 @@
 		}
 
 		function ComponentIterator(data, settings) {
-			var self = this.parent.constructor.call(this);
+			var self = Emitter.call(this);
 
 			storage[self.uuid] = {
 				settings: functionMerge({}, ComponentIterator.settings, settings),
