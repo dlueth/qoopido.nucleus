@@ -83,6 +83,8 @@
 			if(elements) {
 				self.add(elements);
 			}
+			
+			return self;
 		}
 
 		DomCollection.prototype = {

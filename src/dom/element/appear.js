@@ -110,7 +110,7 @@
 		}
 
 		function DomElementAppear(element, settings) {
-			var self = this.parent.constructor.call(this, element);
+			var self = DomElement.call(this, element);
 
 			settings = functionMerge({}, DomElementAppear.settings, settings);
 

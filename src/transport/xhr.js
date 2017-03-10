@@ -111,13 +111,15 @@
 		}
 
 		function TransportXhr(url, data, settings) {
-			var self = this.parent.constructor.call(this);
+			var self = abstractUuid.call(this);
 
 			storage[self.uuid] = {
 				settings: functionMerge({}, TransportXhr.settings, settings),
 				url:      new Url(url),
 				data:     data
 			};
+			
+			return self;
 		}
 
 		TransportXhr.prototype = {

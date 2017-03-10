@@ -8,6 +8,8 @@
 	function definition(hooksEvent) {
 		function DomEvent(event) {
 			hooksEvent.process(this, event);
+			
+			return this;
 		}
 
 		DomEvent.prototype = {

@@ -11,7 +11,7 @@
 		var storage = {};
 
 		function ComponentSense(query) {
-			var self = this.parent.constructor.call(this),
+			var self = Emitter.call(this),
 				mql  = matchMedia(query);
 
 			storage[self.uuid] = mql;
