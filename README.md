@@ -45,7 +45,7 @@ Afterwards you simply have to define a ```path``` for ```/nucleus``` pointing to
 		demand
 			.configure({
 				pattern: {
-					'/nucleus': '//cdn.jsdelivr.net/qoopido.nucleus/1.0.0'
+					'/nucleus': '//cdn.jsdelivr.net/npm/qoopido.nucleus@3.0.5/dist/base.js'
 				},
 				modules: {
 				}
