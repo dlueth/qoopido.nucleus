@@ -3,8 +3,6 @@
 [![NPM downloads](https://img.shields.io/npm/dt/qoopido.nucleus.svg?style=flat-square&label=npm%20downloads)](https://www.npmjs.org/package/qoopido.nucleus)
 [![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/qoopido.nucleus/badge)](https://www.jsdelivr.com/package/npm/qoopido.nucleus)
 
-> And if you like it and want to help even more, spread the word as well!
-
 # Qoopido.nucleus
 Nucleus is a lightweight, atomic and modular JavaScript utility library that strongly encourages the creation and usage of small yet flexible, reusable and easily maintainable modules.
 
