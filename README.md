@@ -1,4 +1,7 @@
-> **If you would like to support this project feel free to star or fork it, or both. By doing so it will be easier to get it into some of the usual CDNs :)**
+[![License](https://img.shields.io/npm/l/qoopido.nucleus.svg?style=flat-square)](https://github.com/dlueth/qoopido.nucleus)
+[![Code Climate](https://img.shields.io/codeclimate/github/dlueth/qoopido.nucleus.svg?style=flat-square)](https://codeclimate.com/github/dlueth/qoopido.nucleus)
+[![NPM downloads](https://img.shields.io/npm/dt/qoopido.nucleus.svg?style=flat-square&label=npm%20downloads)](https://www.npmjs.org/package/qoopido.nucleus)
+[![jsDelivr Hits](https://data.jsdelivr.com/v1/package/npm/qoopido.nucleus/badge)](https://www.jsdelivr.com/package/npm/qoopido.nucleus)
 
 > And if you like it and want to help even more, spread the word as well!
 
