@@ -2,21 +2,32 @@
 	'use strict';
 
 	function definition() {
-		return function functionDebounce(fn, delay) {
+		return function functionDebounce(fn, delay, immediate) {
 			var timeout;
 
-			delay = parseInt(delay, 10) || 200;
-
-			return function() {
+			function debounced() {
 				var context   = this,
-					parameter = arguments;
+						parameter = arguments,
+						call      = immediate && !timeout;
 
-				clearTimeout(timeout);
+				function execute() {
+					debounced.cancel();
 
-				timeout = setTimeout(function() {
-					fn.apply(context, parameter)
-				}, delay);
+					!immediate && fn.apply(context, parameter);
+				}
+
+				debounced.cancel();
+
+				timeout = setTimeout(execute, parseInt(delay, 10) || 200);
+
+				call && fn.apply(context, parameter);
+			}
+
+			debounced.cancel = function() {
+				timeout = clearTimeout(timeout);
 			};
+
+			return debounced;
 		};
 	}
 
