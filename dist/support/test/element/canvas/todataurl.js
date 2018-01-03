@@ -1,2 +1,2 @@
-!function(e){"use strict";function n(n,t){var c=n.defer();return t.then(function(){"toDataURL"in e.createElement("canvas")?c.resolve():c.reject()},c.reject),c.pledge}provide(["/demand/pledge","../canvas"],n)}(document);
+!function(e){"use strict";function n(n,t){var r=n.defer();return t.then(function(){var n=e.createElement("canvas");"toDataURL"in n?r.resolve():r.reject()},r.reject),r.pledge}provide(["/demand/pledge","../canvas"],n)}(document);
 //# sourceMappingURL=todataurl.js.map
