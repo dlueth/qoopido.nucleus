@@ -1,2 +1,2 @@
-!function(e){"use strict";function t(t){var r=t.defer(),n=e.createElement("div").style,c="fontSize";try{n[c]="3rem"}catch(e){}return/rem/.test(n[c])?r.resolve():r.reject(),r.pledge}provide(["/demand/pledge"],t)}(document);
+!function(e){"use strict";provide(["/demand/pledge"],function(t){var r=t.defer(),n=e.createElement("div").style;try{n.fontSize="3rem"}catch(e){}return/rem/.test(n.fontSize)?r.resolve():r.reject(),r.pledge})}(document);
 //# sourceMappingURL=rem.js.map
