@@ -27,7 +27,7 @@ gulp.task(id + ':build', function() {
 	return gulp.src(task.watch)
 		.pipe(plugins.sourcemaps.init())
 		.pipe(plugins.plumber({ errorHandler: shared.handleError}))
-		.pipe(plugins.uglify({ preserveComments: 'none' }))
+		.pipe(plugins.uglify())
 		.pipe(plugins.insert.transform(shared.transform))
 		.pipe(plugins.chmod(shared.rights))
 		.pipe(plugins.size({ showFiles: true, gzip: true }))
