@@ -8,7 +8,7 @@
 	function definition(hooksEvent) {
 		function DomEvent(event) {
 			hooksEvent.process(this, event);
-			
+
 			return this;
 		}
 
@@ -22,7 +22,7 @@
 				var self  = this,
 					event = self.originalEvent;
 
-				if(event.cancelable !== false) {
+				if(self.cancelable !== false && !self.passive) {
 					self.isDefaultPrevented = true;
 
 					if(event.preventDefault) {
