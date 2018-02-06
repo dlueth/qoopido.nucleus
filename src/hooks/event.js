@@ -64,6 +64,10 @@
 						}
 					}
 				},
+				touch: {
+					match:      /^(?:touch)/,
+					properties: 'passive'.split(' ')
+				},
 				key: {
 					match:      /^(?:key)/,
 					properties: 'char charCode key keyCode'.split(' '),

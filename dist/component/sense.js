@@ -1,2 +1,2 @@
-!function(t){"use strict";function e(t,e){function i(i){var c=t.call(this),r=e(i);return n[c.uuid]=r,r.addListener(function(){c.emit(r.matches===!0?"match":"unmatch")}),c}var n={};return i.prototype={get matches(){var t=n[this.uuid];if(t)return t.matches}},i.extends(t)}provide(["../emitter",t.matchMedia||"../polyfill/window/matchmedia"],e)}(this);
+!function(t){"use strict";provide(["../emitter",t.matchMedia||"../polyfill/window/matchmedia"],function(t,e){var i={};function n(n){var a=t.call(this),r=e(n);return i[a.uuid]=r,r.addListener(function(){a.emit(!0===r.matches?"match":"unmatch")}),a}return n.prototype={get matches(){var t=i[this.uuid];if(t)return t.matches}},n.extends(t)})}(this);
 //# sourceMappingURL=sense.js.map

@@ -190,6 +190,11 @@
 			clone: function() {
 				return new DomElement(this.node.cloneNode(true));
 			},
+			blur: function() {
+				this.node.blur();
+
+				return this;
+			},
 			getPosition: function() {
 				var bbox = this.node.getBoundingClientRect();
 

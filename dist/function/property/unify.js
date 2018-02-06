@@ -1,2 +1,2 @@
-!function(){"use strict";function r(r,t){function i(r,i){return t(i)}var n=/^-?(?:webkit|khtml|icab|moz|ms|o)([A-Z]|-[a-z])/,c=/-([a-z])/gi;return function(t){return r(r(t).replace(n,"$1").replace(c,i))}}provide(["../string/lcfirst","../string/ucfirst"],r)}();
+!function(){"use strict";provide(["../string/lcfirst","../string/ucfirst"],function(r,t){var i=/^-?(?:webkit|khtml|icab|moz|ms|o)([A-Z]|-[a-z])/,n=/-([a-z])/gi;function c(r,i){return t(i)}return function(t){return r(r(t).replace(i,"$1").replace(n,c))}})}();
 //# sourceMappingURL=unify.js.map
