@@ -83,7 +83,7 @@
 			if(elements) {
 				self.add(elements);
 			}
-			
+
 			return self;
 		}
 
@@ -230,6 +230,9 @@
 				}
 
 				return self;
+			},
+			blur: function() {
+				return map.call(this, 'blur');
 			},
 			on: function() {
 				return map.apply(this, [ 'on' ].concat(arrayPrototypeSlice.call(arguments)));

@@ -1,2 +1,2 @@
-!function(e){"use strict";function n(n){var r=n.defer(),t=e.createElement("video");return"canPlayType"in t?r.resolve():r.reject(),r.pledge}provide(["/demand/pledge"],n)}(document);
+!function(e){"use strict";provide(["/demand/pledge"],function(n){var r=n.defer();return"canPlayType"in e.createElement("video")?r.resolve():r.reject(),r.pledge})}(document);
 //# sourceMappingURL=video.js.map

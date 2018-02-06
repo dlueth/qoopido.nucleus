@@ -2,8 +2,7 @@ module.exports = {
 	tasks: {
 		bump: {
 			watch: [
-				"package.json",
-				"bower.json"
+				"package.json"
 			]
 		},
 		"dist": {
