@@ -564,8 +564,9 @@
 			},
 			on: function(events) {
 				var self     = this,
-					delegate = arguments.length > 2 ? arguments[1] : NULL,
-					fn       = delegate ? arguments[2] : arguments[1],
+					delegate = (arguments.length === 4 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
+					fn       = (arguments.length === 4 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
+					capture  = ((arguments.length > 3) ? arguments[3] : arguments[2]) === true,
 					uuid     = fn.uuid || (fn.uuid = generateUuid()),
 					i = 0, event;
 
@@ -597,16 +598,17 @@
 					handler.type            = event;
 					listener[self.uuid][id] = handler;
 
-					self.node.addEventListener(event, handler);
+					self.node.addEventListener(event, handler, capture);
 				}
 
 				return self;
 			},
 			one: function(events) {
 				var self     = this,
-					delegate = (arguments.length > 3 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
-					fn       = (arguments.length > 3 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
+					delegate = (arguments.length === 5 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
+					fn       = (arguments.length === 5 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
 					each     = ((arguments.length > 3) ? arguments[3] : arguments[2]) !== false,
+					capture  = ((arguments.length > 4) ? arguments[4] : arguments[3]) === true,
 					handler  = function(event) {
 						self.off(((each === true) ? event.type : events), handler);
 
@@ -616,9 +618,9 @@
 				fn.uuid = handler.uuid = generateUuid();
 
 				if(delegate) {
-					self.on(events, delegate, handler);
+					self.on(events, delegate, handler, capture);
 				} else {
-					self.on(events, handler);
+					self.on(events, handler, capture);
 				}
 
 				return self;
