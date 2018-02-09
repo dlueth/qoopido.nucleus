@@ -190,6 +190,11 @@
 			clone: function() {
 				return new DomElement(this.node.cloneNode(true));
 			},
+			focus: function() {
+				this.node.focus();
+
+				return this;
+			},
 			blur: function() {
 				this.node.blur();
 
