@@ -1,5 +1,5 @@
 /**
- * @use /demand/abstract/uuid
+ * @use /demand/weakmap
  * @use /demand/pledge
  * @use /demand/validator/isObject
  * @use /demand/function/iterate
@@ -11,12 +11,12 @@
 (function(global, XHR) {
 	'use strict';
 
-	function definition(abstractUuid, Pledge, isObject, iterate, Url, functionMerge) {
+	function definition(Weakmap, Pledge, isObject, iterate, Url, functionMerge) {
 		var XDR                       = 'XDomainRequest' in global &&  global.XDomainRequest || XHR,
 			regexMatchSpaces          = /%20/g,
 			regexMatchOpeningBrackets = /%5B/g,
 			regexMatchClosingBrackets = /%5D/g,
-			storage                   = {};
+			storage                   = new Weakmap();
 
 		function serialize(parameter) {
 			var result = '';
@@ -38,8 +38,7 @@
 		}
 
 		function request(method) {
-			var self            = this,
-				properties      = storage[self.uuid],
+			var properties      = storage.get(this),
 				settings        = properties.settings,
 				url             = properties.url,
 				data            = properties.data,
@@ -111,15 +110,13 @@
 		}
 
 		function TransportXhr(url, data, settings) {
-			var self = abstractUuid.call(this);
-
-			storage[self.uuid] = {
+			storage.set(this, {
 				settings: functionMerge({}, TransportXhr.settings, settings),
 				url:      new Url(url),
 				data:     data
-			};
-			
-			return self;
+			});
+
+			return this;
 		}
 
 		TransportXhr.prototype = {
@@ -155,8 +152,8 @@
 			xhrOptions:  {}
 		};
 
-		return TransportXhr.extends(abstractUuid);
+		return TransportXhr;
 	}
 
-	provide([ '/demand/abstract/uuid', '/demand/pledge', '/demand/validator/isObject', '/demand/function/iterate', '../url', '../function/merge' ], definition);
+	provide([ '/demand/weakmap', '/demand/pledge', '/demand/validator/isObject', '/demand/function/iterate', '../url', '../function/merge' ], definition);
 }(this, XMLHttpRequest));
