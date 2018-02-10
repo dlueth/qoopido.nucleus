@@ -5,14 +5,14 @@
 (function(undefined) {
 	'use strict';
 
-	function definition(ClassWeakmap, iterate) {
+	function definition(Weakmap, iterate) {
 		var regexMatchExcludedMethods      = /^(_|((get|has|is)([A-Z]|$))|(on|one|off|emit|constructor)$)/,
 			objectDefineProperty           = Object.defineProperty,
 			objectGetOwnPropertyNames      = Object.getOwnPropertyNames,
 			objectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
 			objectGetPrototypeOf           = Object.getPrototypeOf,
 			objectPrototype                = Object.prototype,
-			storage                        = new ClassWeakmap();
+			storage                        = new Weakmap();
 
 		function getPropertyNames(object) {
 			var prototype = object,
