@@ -1,4 +1,6 @@
 /**
+ * @use /demand/weakmap
+ *
  * @require ../emitter
  * @require ../function/merge
  */
@@ -6,21 +8,21 @@
 (function() {
 	'use strict';
 
-	function definition(Emitter, functionMerge) {
-		var storage = {};
+	function definition(Weakmap, Emitter, functionMerge) {
+		var storage = new Weakmap();
 
-		function getStorageProperty(uuid, property) {
+		function getStorageProperty(context, property) {
 			var properties;
 
-			if(properties = storage[uuid]) {
+			if(properties = storage.get(context)) {
 				return properties[property];
 			}
 		}
 
-		function getDataProperty(uuid, property) {
+		function getDataProperty(context, property) {
 			var properties;
 
-			if((properties = storage[uuid]) && properties.data) {
+			if((properties = storage.get(context)) && properties.data) {
 				return properties.data[property];
 			}
 		}
@@ -28,11 +30,11 @@
 		function ComponentIterator(data, settings) {
 			var self = Emitter.call(this);
 
-			storage[self.uuid] = {
+			storage.set(self, {
 				settings: functionMerge({}, ComponentIterator.settings, settings),
 				index:    null,
 				data:     null
-			};
+			});
 
 			data && self.setData(data);
 
@@ -43,24 +45,23 @@
 			// properties
 				// length
 					get length() {
-						return getDataProperty(this.uuid, 'length') || 0;
+						return getDataProperty(this, 'length') || 0;
 					},
 				// index
 					get index() {
-						return getStorageProperty(this.uuid, 'index');
+						return getStorageProperty(this, 'index');
 					},
 				// item
 					get item() {
-						return getDataProperty(this.uuid, this.index);
+						return getDataProperty(this, this.index);
 					},
 			// methods
 				setData: function(data) {
 					var self = this,
-						uuid, properties, settings;
+						properties, settings;
 
 					if(typeof data === 'object' && data.length) {
-						uuid       = self.uuid;
-						properties = storage[uuid];
+						properties = storage.get(self);
 						settings   = properties.settings;
 
 						properties.data = data;
@@ -74,7 +75,7 @@
 				},
 				seek: function(index) {
 					var self       = this,
-						properties = storage[self.uuid];
+						properties = storage.get(self);
 
 					index = parseInt(index, 10);
 
@@ -94,8 +95,7 @@
 				},
 				previous: function() {
 					var self       = this,
-						uuid       = self.uuid,
-						settings   = storage[uuid].settings,
+						settings   = storage.get(self).settings,
 						index;
 
 					index = (settings.loop === true) ? (self.index - 1) % self.length : self.index - 1;
@@ -105,8 +105,7 @@
 				},
 				next: function() {
 					var self       = this,
-						uuid       = self.uuid,
-						settings   = storage[uuid].settings,
+						settings   = storage.get(self).settings,
 						index;
 
 					index = (settings.loop === true) ? (self.index + 1) % self.length : self.index + 1;
@@ -120,5 +119,5 @@
 		return ComponentIterator.extends(Emitter);
 	}
 
-	provide([ '../emitter', '../function/merge' ], definition);
+	provide([ '/demand/weakmap', '../emitter', '../function/merge' ], definition);
 }());
