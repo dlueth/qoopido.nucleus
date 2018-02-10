@@ -1,5 +1,5 @@
 /**
- * @use /demand/abstract/uuid
+ * @use /demand/weakmap
  */
 
 (function(undefined) {
