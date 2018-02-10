@@ -1,4 +1,6 @@
 /**
+ * @use /demand/weakmap
+ *
  * @require ../element
  * @require ../../function/merge
  * @require ../../function/debounce
@@ -11,11 +13,11 @@
 		throw new Error('Browser needs to be in standards mode');
 	}
 
-	function definition(DomElement, functionMerge, functionDebounce) {
+	function definition(Weakmap, DomElement, functionMerge, functionDebounce) {
 		var documentElement  = document.documentElement,
 			window           = new DomElement(global),
 			viewport         = {},
-			storage          = {},
+			storage          = new Weakmap(),
 			elements         = [],
 			EVENTS_RESIZE    = 'resize orientationchange',
 			EVENT_APPEAR     = 'appear',
@@ -28,7 +30,7 @@
 			var i = 0, element, properties, settings, state;
 
 			for(; element = elements[i]; i++) {
-				properties = storage[element.uuid];
+				properties = storage.get(element);
 				settings   = properties.settings;
 
 				if(!settings.visibility || element.isVisible()) {
@@ -69,8 +71,7 @@
 		}
 
 		function updateBoundaries() {
-			var self       = this,
-				properties = storage[self.uuid],
+			var properties = storage.get(this),
 				settings   = properties.settings,
 				boundaries = properties.boundaries,
 				treshold   = settings.threshold,
@@ -96,7 +97,7 @@
 		function check() {
 			var self       = this,
 				node       = self.node,
-				properties = storage[self.uuid];
+				properties = storage.get(self);
 
 			if(isWithinBoundaries(node, viewport)) {
 				return 2;
@@ -118,11 +119,11 @@
 				delete settings.threshold;
 			}
 
-			storage[self.uuid] = {
+			storage.set(self, {
 				settings:   settings,
 				boundaries: {},
 				state:      -1
-			};
+			});
 
 			window.on(EVENTS_RESIZE, functionDebounce(updateBoundaries.bind(self)));
 
@@ -142,5 +143,5 @@
 		return DomElementAppear.extends(DomElement);
 	}
 
-	provide([ '../element', '../../function/merge', '../../function/debounce' ], definition);
+	provide([ '/demand/weakmap', '../element', '../../function/merge', '../../function/debounce' ], definition);
 }(this, document, setInterval));
