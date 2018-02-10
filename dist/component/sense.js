@@ -1,2 +1,2 @@
-!function(t){"use strict";provide(["../emitter",t.matchMedia||"../polyfill/window/matchmedia"],function(t,e){var i={};function n(n){var a=t.call(this),r=e(n);return i[a.uuid]=r,r.addListener(function(){a.emit(!0===r.matches?"match":"unmatch")}),a}return n.prototype={get matches(){var t=i[this.uuid];if(t)return t.matches}},n.extends(t)})}(this);
+!function(t){"use strict";provide(["/demand/weakmap","../emitter",t.matchMedia||"../polyfill/window/matchmedia"],function(t,e,a){var i=new t;function n(t){var n=e.call(this),r=a(t);return i.set(n,r),r.addListener(function(){n.emit(!0===r.matches?"match":"unmatch")}),n}return n.prototype={get matches(){var t=i.get(this);if(t)return t.matches}},n.extends(e)})}(this);
 //# sourceMappingURL=sense.js.map
