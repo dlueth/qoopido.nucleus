@@ -164,5 +164,5 @@
 		return Emitter;
 	}
 
-	provide([ '/demand/class/weakmap', '/demand/function/iterate' ], definition);
+	provide([ '/demand/weakmap', '/demand/function/iterate' ], definition);
 }());

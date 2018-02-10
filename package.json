@@ -2,7 +2,7 @@
   "name": "qoopido.nucleus",
   "title": "Qoopido.nucleus",
   "description": "Lightweight, atomic and modular JavaScript utility library that strongly encourages the creation and usage of small yet flexible, reusable and easily maintainable modules.",
-  "version": "3.1.0-alpha.2",
+  "version": "3.1.0-alpha.3",
   "homepage": "http://nucleus.qoopido.com",
   "author": {
     "name": "Dirk Lueth",
