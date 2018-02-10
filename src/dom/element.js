@@ -190,6 +190,11 @@
 			clone: function() {
 				return new DomElement(this.node.cloneNode(true));
 			},
+			focus: function() {
+				this.node.focus();
+
+				return this;
+			},
 			blur: function() {
 				this.node.blur();
 
@@ -559,8 +564,9 @@
 			},
 			on: function(events) {
 				var self     = this,
-					delegate = arguments.length > 2 ? arguments[1] : NULL,
-					fn       = delegate ? arguments[2] : arguments[1],
+					delegate = (arguments.length === 4 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
+					fn       = (arguments.length === 4 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
+					capture  = ((arguments.length > 3) ? arguments[3] : arguments[2]) === true,
 					uuid     = fn.uuid || (fn.uuid = generateUuid()),
 					i = 0, event;
 
@@ -592,18 +598,19 @@
 					handler.type            = event;
 					listener[self.uuid][id] = handler;
 
-					self.node.addEventListener(event, handler);
+					self.node.addEventListener(event, handler, capture);
 				}
 
 				return self;
 			},
 			one: function(events) {
 				var self     = this,
-					delegate = (arguments.length > 3 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
-					fn       = (arguments.length > 3 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
-					each     = ((arguments.length > 3) ? arguments[3] : arguments[2]) !== false,
+					delegate = (arguments.length === 5 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
+					fn       = (arguments.length === 5 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
+					capture  = ((arguments.length > 3) ? arguments[3] : arguments[2]) === true,
+					each     = ((arguments.length > 4) ? arguments[4] : arguments[3]) !== false,
 					handler  = function(event) {
-						self.off(((each === true) ? event.type : events), handler);
+						self.off(((each === true) ? event.type : events), handler, capture);
 
 						fn.call(this, event, event.originalEvent.detail);
 					};
@@ -611,14 +618,14 @@
 				fn.uuid = handler.uuid = generateUuid();
 
 				if(delegate) {
-					self.on(events, delegate, handler);
+					self.on(events, delegate, handler, capture);
 				} else {
-					self.on(events, handler);
+					self.on(events, handler, capture);
 				}
 
 				return self;
 			},
-			off: function(events, fn) {
+			off: function(events, fn, capture) {
 				var self = this,
 					node = self.node,
 					i = 0, event, id, handler;
@@ -630,11 +637,11 @@
 					handler = id && listener[self.uuid][id] || NULL;
 
 					if(handler) {
-						node.removeEventListener(event, handler);
+						node.removeEventListener(event, handler, capture);
 
 						delete listener[self.uuid][id];
 					} else {
-						node.removeEventListener(event, fn);
+						node.removeEventListener(event, fn, capture);
 					}
 				}
 

@@ -1,30 +1,30 @@
 /**
- * @use /demand/abstract/uuid
+ * @use /demand/weakmap
  */
 
 (function(undefined) {
 	'use strict';
 
-	function definition(abstractUuid, iterate) {
+	function definition(Weakmap, iterate) {
 		var regexMatchExcludedMethods      = /^(_|((get|has|is)([A-Z]|$))|(on|one|off|emit|constructor)$)/,
 			objectDefineProperty           = Object.defineProperty,
 			objectGetOwnPropertyNames      = Object.getOwnPropertyNames,
 			objectGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor,
 			objectGetPrototypeOf           = Object.getPrototypeOf,
 			objectPrototype                = Object.prototype,
-			storage                        = {};
+			storage                        = new Weakmap();
 
 		function getPropertyNames(object) {
 			var prototype = object,
 				keys      = [],
 				names, i, name;
-			
+
 			try {
 				while(prototype !== objectPrototype) {
 					for(names = objectGetOwnPropertyNames(prototype), i = 0; (name = names[i]); i++) {
 						keys.indexOf(name) === -1 && keys.push(name);
 					}
-					
+
 					prototype = prototype.__proto__;
 				}
 			} catch(error) {
@@ -49,7 +49,7 @@
 			var self       = this,
 				prototype  = self.constructor.prototype,
 				properties = getPropertyNames(prototype);
-			
+
 			properties.forEach(function(property) {
 				var descriptor = getPropertyDescriptor(prototype, property),
 					event;
@@ -75,21 +75,19 @@
 		}
 
 		function Emitter() {
-			var self = abstractUuid.call(this);
-
-			storage[self.uuid] = {};
+			storage.set(this, {});
 
 			if(objectGetPrototypeOf(self) !== Emitter.prototype) {
-				wrap.call(self);
+				wrap.call(this);
 			}
-			
-			return self;
+
+			return this;
 		}
 
 		Emitter.prototype = {
 			on: function(events, fn) {
 				var self    = this,
-					pointer = storage[self.uuid],
+					pointer = storage.get(this),
 					i = 0, event;
 
 				events = events.split(' ');
@@ -115,7 +113,7 @@
 			},
 			off: function(events, fn) {
 				var self    = this,
-					pointer = storage[self.uuid],
+					pointer = storage.get(this),
 					i = 0, event, j, listener;
 
 				if(events) {
@@ -149,7 +147,7 @@
 					pointer, temp, i = 0, listener;
 
 				if(event) {
-					pointer = storage[self.uuid];
+					pointer = storage.get(this);
 
 					pointer[event] = pointer[event] || [];
 					temp           = pointer[event].slice();
@@ -163,8 +161,8 @@
 			}
 		};
 
-		return Emitter.extends(abstractUuid);
+		return Emitter;
 	}
 
-	provide([ '/demand/abstract/uuid', '/demand/function/iterate' ], definition);
+	provide([ '/demand/weakmap', '/demand/function/iterate' ], definition);
 }());

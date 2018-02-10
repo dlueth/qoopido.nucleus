@@ -1,5 +1,7 @@
 /**
  * @use /demand/abstract/uuid
+ * @use /demand/descriptor
+ * @use /demand/function/iterate
  */
 
 (function(global, document) {
@@ -117,7 +119,7 @@
 				valueOf:   new Descriptor(function() { return link.valueOf(); }),
 				parameter: new Descriptor(new Parameter(self.uuid))
 			});
-			
+
 			return self;
 		}
 
