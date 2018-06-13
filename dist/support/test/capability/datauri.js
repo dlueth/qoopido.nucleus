@@ -1,2 +1,2 @@
-!function(e){"use strict";provide(["/demand/pledge"],function(A){var t=A.defer(),d=e.createElement("img");return d.onload=function(){1===d.width&&1===d.height?t.resolve():t.reject(),delete d.onload},d.src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",t.pledge})}(document);
+!function(d){"use strict";provide(["/demand/pledge"],function(e){var A=e.defer(),t=d.createElement("img");return t.onload=function(){1===t.width&&1===t.height?A.resolve():A.reject(),delete t.onload},t.src="data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",A.pledge})}(document);
 //# sourceMappingURL=datauri.js.map
