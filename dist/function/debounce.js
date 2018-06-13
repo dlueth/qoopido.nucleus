@@ -1,2 +1,2 @@
-!function(n){"use strict";provide(function(){return function(t,c,e){var i;function u(){var r=this,a=arguments,o=e&&!i;u.cancel(),i=n(function(){u.cancel(),!e&&t.apply(r,a)},parseInt(c,10)||200),o&&t.apply(r,a)}return u.cancel=function(){i=clearTimeout(i)},u}})}(setTimeout);
+!function(o){"use strict";provide(function(){return function(e,i,u){var r;function a(){var n=this,t=arguments,c=u&&!r;a.cancel(),r=o(function(){a.cancel(),!u&&e.apply(n,t)},parseInt(i,10)||200),c&&e.apply(n,t)}return a.cancel=function(){r=clearTimeout(r)},a}})}(setTimeout);
 //# sourceMappingURL=debounce.js.map

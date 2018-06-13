@@ -1,2 +1,2 @@
-!function(e){"use strict";provide(["/demand/pledge","../video"],function(n,t){var c=n.defer();return t.then(function(){e.createElement("video").canPlayType('video/webm; codecs="vp8, vorbis"')?c.resolve():c.reject()},c.reject),c.pledge})}(document);
+!function(c){"use strict";provide(["/demand/pledge","../video"],function(e,n){var t=e.defer();return n.then(function(){c.createElement("video").canPlayType('video/webm; codecs="vp8, vorbis"')?t.resolve():t.reject()},t.reject),t.pledge})}(document);
 //# sourceMappingURL=webm.js.map

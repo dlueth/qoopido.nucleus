@@ -1,2 +1,2 @@
-!function(n){"use strict";provide(["/demand/validator/isObject","/demand/function/iterate"],function(t,e){return function i(){for(var r,o,u,c=arguments[0],a=1;(r=arguments[a])!==n;a++)e(r,function(e,r){o=c[e],r!==n&&(t(r)?(u=t(o),o=r.length!==n?u&&o.length!==n?o:[]:u&&o.length===n?o:{},c[e]=i(o,r)):c[e]=r)});return c}})}();
+!function(a){"use strict";provide(["/demand/validator/isObject","/demand/function/iterate"],function(u,c){return function e(){for(var n,i,r,o=arguments[0],t=1;(n=arguments[t])!==a;t++)c(n,function(n,t){i=o[n],t!==a&&(u(t)?(r=u(i),i=t.length!==a?r&&i.length!==a?i:[]:r&&i.length===a?i:{},o[n]=e(i,t)):o[n]=t)});return o}})}();
 //# sourceMappingURL=merge.js.map
