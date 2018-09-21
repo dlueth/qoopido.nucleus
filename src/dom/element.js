@@ -79,7 +79,7 @@
 		}
 
 		function resolveArguments(parameters) {
-			return arrayPrototypeConcat.apply([], arrayPrototypeSlice(parameters)).join(' ').split(regexMatchSpaces);
+			return arrayPrototypeConcat.apply([], arrayPrototypeSlice.call(parameters)).join(' ').split(regexMatchSpaces);
 		}
 
 		function matchesDelegate(event, delegate) {

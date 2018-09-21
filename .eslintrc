@@ -5,6 +5,7 @@
   },
   "extends": "eslint:recommended",
   "rules": {
+	"getter-return": 0,
     "no-cond-assign": 0,
     "camelcase": [
       2
