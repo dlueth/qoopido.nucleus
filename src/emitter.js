@@ -14,6 +14,10 @@
 			objectPrototype                = Object.prototype,
 			storage                        = new Weakmap();
 
+		function getStorage(context) {
+			return storage.get(context) || (storage.set(context, {}) && storage.get(context));
+		}
+
 		function getPropertyNames(object) {
 			var prototype = object,
 				keys      = [],
@@ -54,7 +58,7 @@
 				var descriptor = getPropertyDescriptor(prototype, property),
 					event;
 
-				if(typeof self[property] === 'function' && regexMatchExcludedMethods.test(property) === false) {
+				if(!descriptor.get && typeof self[property] === 'function' && regexMatchExcludedMethods.test(property) === false) {
 					event = property.charAt(0).toUpperCase() + property.slice(1);
 
 					descriptor.value = function() {
@@ -75,8 +79,6 @@
 		}
 
 		function Emitter() {
-			storage.set(this, {});
-
 			if(objectGetPrototypeOf(self) !== Emitter.prototype) {
 				wrap.call(this);
 			}
@@ -87,7 +89,7 @@
 		Emitter.prototype = {
 			on: function(events, fn) {
 				var self    = this,
-					pointer = storage.get(this),
+					pointer = getStorage(self),
 					i = 0, event;
 
 				events = events.split(' ');
@@ -113,7 +115,7 @@
 			},
 			off: function(events, fn) {
 				var self    = this,
-					pointer = storage.get(this),
+					pointer = getStorage(self),
 					i = 0, event, j, listener;
 
 				if(events) {
@@ -147,7 +149,7 @@
 					pointer, temp, i = 0, listener;
 
 				if(event) {
-					pointer = storage.get(this);
+					pointer = getStorage(self);
 
 					pointer[event] = pointer[event] || [];
 					temp           = pointer[event].slice();
