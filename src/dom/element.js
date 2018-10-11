@@ -112,7 +112,7 @@
 			var i = 0, pointer;
 
 			for(; pointer = event.path[i]; i++) {
-				if(pointer[STRING_MATCHES](delegate)) {
+				if(pointer[STRING_MATCHES] && pointer[STRING_MATCHES](delegate)) {
 					event.currentTarget = pointer;
 
 					return true;
