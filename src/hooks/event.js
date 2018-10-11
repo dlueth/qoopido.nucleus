@@ -64,8 +64,8 @@
 						}
 					}
 				},
-				touch: {
-					match:      /^(?:touch)/,
+				passive: {
+					match:      /^(?:touch|wheel)/,
 					properties: 'passive'.split(' ')
 				},
 				key: {

@@ -37,7 +37,33 @@
 			nextSibling              = (!isTypeOf(head.nextElementSibling, STRING_UNDEFINED)) ? function nextSibling() { return this.nextElementSibling; } : function nextSibling() { var element = this; while(element = element.nextSibling) { if(element.nodeType === 1 ) { return element; } } },
 			// flags
 			// general storage & objects
-			listener                 = {};
+			listener                 = {},
+			supportsPassiveListener  = false;
+
+		(function() {
+			var noop  = function() {},
+				event = '' + (+new Date()),
+				options;
+
+			try {
+				options = Object.defineProperty({}, 'passive', {
+					get: function() {
+						supportsPassiveListener = true;
+					}
+				});
+
+				global.addEventListener(event, noop, options);
+				global.removeEventListener(event, noop, options);
+			} catch(error) {} /* eslint-disable-line no-empty */
+		}());
+
+		function processOptions(options) {
+			if(supportsPassiveListener || typeof options === 'boolean') {
+				return options;
+			}
+
+			return options.capture;
+		}
 
 		function emitEvent(type, detail, uuid) {
 			var self = this,
@@ -566,7 +592,7 @@
 				var self     = this,
 					delegate = (arguments.length === 4 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
 					fn       = (arguments.length === 4 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
-					capture  = ((arguments.length > 3) ? arguments[3] : arguments[2]) === true,
+					options  = processOptions((arguments.length > 3) ? arguments[3] : arguments[2]),
 					uuid     = fn.uuid || (fn.uuid = generateUuid()),
 					i = 0, event;
 
@@ -598,7 +624,7 @@
 					handler.type            = event;
 					listener[self.uuid][id] = handler;
 
-					self.node.addEventListener(event, handler, capture);
+					self.node.addEventListener(event, handler, options);
 				}
 
 				return self;
@@ -607,10 +633,10 @@
 				var self     = this,
 					delegate = (arguments.length === 5 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
 					fn       = (arguments.length === 5 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
-					capture  = ((arguments.length > 3) ? arguments[3] : arguments[2]) === true,
+					options  = processOptions((arguments.length > 3) ? arguments[3] : arguments[2]),
 					each     = ((arguments.length > 4) ? arguments[4] : arguments[3]) !== false,
 					handler  = function(event) {
-						self.off(((each === true) ? event.type : events), handler, capture);
+						self.off(((each === true) ? event.type : events), handler, options);
 
 						fn.call(this, event, event.originalEvent.detail);
 					};
@@ -618,30 +644,31 @@
 				fn.uuid = handler.uuid = generateUuid();
 
 				if(delegate) {
-					self.on(events, delegate, handler, capture);
+					self.on(events, delegate, handler, options);
 				} else {
-					self.on(events, handler, capture);
+					self.on(events, handler, options);
 				}
 
 				return self;
 			},
-			off: function(events, fn, capture) {
+			off: function(events, fn, options) {
 				var self = this,
 					node = self.node,
 					i = 0, event, id, handler;
 
-				events = events.split(' ');
+				options = processOptions(options);
+				events  = events.split(' ');
 
 				for(; event = events[i]; i++) {
 					id      = fn.uuid && event + '-' + fn.uuid || NULL;
 					handler = id && listener[self.uuid][id] || NULL;
 
 					if(handler) {
-						node.removeEventListener(event, handler, capture);
+						node.removeEventListener(event, handler, options);
 
 						delete listener[self.uuid][id];
 					} else {
-						node.removeEventListener(event, fn, capture);
+						node.removeEventListener(event, fn, options);
 					}
 				}
 
