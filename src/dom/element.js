@@ -62,7 +62,7 @@
 				return options;
 			}
 
-			return options.capture;
+			return options && options.capture;
 		}
 
 		function emitEvent(type, detail, uuid) {
