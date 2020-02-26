@@ -1,36 +1,69 @@
-var gulp     = require('gulp'),
-	sequence = require('run-sequence').use(gulp),
-	plugins  = require('gulp-load-plugins')(),
-	clean    = require('del'),
-	shared   = require('../shared'),
-	config   = require('../config'),
-	id       = 'dist',
-	task     = config.tasks[id];
+var id         = 'dist',
+	gulp       = require('gulp'),
+	pump       = require('pump'),
+	del        = require('del'),
+	path       = require('path'),
+	plugins    = require('gulp-load-plugins')(),
+	livereload = require('gulp-livereload'),
+	config     = require('../config'),
+	settings   = config.tasks[id];
 
-module.exports = gulp;
+function watch() {
+	livereload.listen();
 
-gulp.task(id, function(callback) {
-	return sequence(id + ':lint', id + ':clean', id + ':build', callback);
-});
+	return gulp.watch(settings.watch, gulp.series(id + ':lint', id + ':build'))
+		.on('unlink', function(file) {
+			/*
+			var relpath  = path.relative(path.resolve('src'), file),
+				resolved = path.resolve('build', relpath);
 
-gulp.task(id + ':lint', function() {
-	return gulp.src(task.watch)
+			console.log(file, relpath, resolved);
+			*/
+			//del.sync(resolved);
+		});
+}
+
+function lint() {
+	return gulp.src(settings.watch)
 		.pipe(plugins.eslint())
-		.pipe(plugins.eslint.format());
-});
+		.pipe(plugins.eslint.format())
+		.pipe(plugins.eslint.failAfterError())
+		.pipe(plugins.size(config.settings.size));
+}
 
-gulp.task(id + ':clean', function(callback) {
-	return clean(task.clean, callback);
-});
+function clean() {
+	return del(settings.clean, { force: true });
+}
 
-gulp.task(id + ':build', function() {
-	return gulp.src(task.watch)
-		.pipe(plugins.sourcemaps.init())
-		.pipe(plugins.plumber({ errorHandler: shared.handleError}))
-		.pipe(plugins.uglify())
-		.pipe(plugins.insert.transform(shared.transform))
-		.pipe(plugins.chmod(shared.rights))
-		.pipe(plugins.size({ showFiles: true, gzip: true }))
-		.pipe(plugins.sourcemaps.write('.'))
-		.pipe(gulp.dest(task.dest));
-});
+function build(done) {
+	pump([
+		gulp.src(settings.process || settings.watch),
+		// beautify
+		plugins.include(config.settings.include),
+		plugins.injectVersion({ prepend: '', replace: '{{package.version}}' }),
+		// generate minified
+		plugins.sourcemaps.init({ largeFile: true }),
+		plugins.terser({
+			ecma: 5,
+			compress: {
+				'passes':  5,
+				'typeofs': false
+			}
+		}),
+		plugins.header(config.banner),
+		plugins.chmod(config.permissions),
+		plugins.size(config.settings.size),
+		plugins.sourcemaps.write('.'),
+		gulp.dest(settings.dest),
+		plugins.touchFd()
+	], function() {
+		livereload.reload();
+		done();
+	});
+}
+
+gulp.task(id + ':watch', watch);
+gulp.task(id + ':lint', lint);
+gulp.task(id + ':clean', clean);
+gulp.task(id + ':build', build);
+gulp.task(id, gulp.series(id + ':lint', id + ':clean', id + ':build'));

@@ -4,7 +4,7 @@
  * @require ../prefix
  */
 
-(function(document, undefined) {
+(function(document) {
 	'use strict';
 
 	function definition(unify, ucfirst, prefix) {

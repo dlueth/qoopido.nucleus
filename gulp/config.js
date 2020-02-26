@@ -1,3 +1,5 @@
+var package = require('../package.json');
+
 module.exports = {
 	tasks: {
 		bump: {
@@ -5,49 +7,43 @@ module.exports = {
 				"package.json"
 			]
 		},
-		"dist": {
+		dist: {
 			watch: "src/**/*.js",
 			clean: "dist/**/*",
-			dest:  "dist"
+			dest:  "dist/"
+		}
+	},
+	permissions: {
+		owner: {
+			read: true,
+			write: true,
+			execute: false
+		},
+		group: {
+			read: true,
+			write: false,
+			execute: false
+		},
+		others: {
+			read: true,
+			write: false,
+			execute: false
 		}
 	},
 	settings: {
-		pleeease: {
-			less: true,
-			mqpacker: true,
-			autoprefixer: {
-				browsers: [
-					"ie > 8",
-					"> 2%"
-				],
-				cascade: true
-			},
-			minifier: {
-				removeAllComments: true
-			}
+		size: {
+			showFiles: true,
+			gzip: true,
+			pretty: true
+		},
+		include: {
+			extensions: "js",
+			hardFail: true,
+			includePaths: [ __dirname + "/../src", __dirname + "/.." ]
 		}
 	},
-	strings: {
-		banner: {
-			min: [
-					 "/**! {{gulp:package.title}} {{gulp:package.version} | {{gulp:package.homepage}} | (c) {{gulp:date.year}} {{gulp:package.author.name}} ({{gulp:package.license}}) */",
-					 ""
-				 ].join('\n'),
-			max: [
-					 "/**!",
-					 " * {{gulp:package.title}}",
-					 " *",
-					 " * version: {{gulp:package.version}}",
-					 " * module:  {{gulp:module}}",
-					 " * date:    {{gulp:date.year}}-{{gulp:date.month}}-{{gulp:date.day}}",
-					 " * author:  {{gulp:package.author.name}} <{{gulp:package.author.email}}>",
-					 " * website: {{gulp:package.homepage}}",
-					 " * license: {{gulp:package.license}}",
-					 " *",
-					 " * Copyright (c) {{gulp:date.year}} {{gulp:package.author.name}}",
-					 " */",
-					 ""
-				 ].join('\n')
-		}
-	}
+	banner: [
+		"/**! " + package.title + " " + package.version + " | " + package.homepage + " | (c) " + (new Date()).getFullYear() + " " + package.author.name + " */",
+		""
+	].join('\n')
 };

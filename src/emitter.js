@@ -2,7 +2,7 @@
  * @use /demand/weakmap
  */
 
-(function(undefined) {
+(function() {
 	'use strict';
 
 	function definition(Weakmap, iterate) {

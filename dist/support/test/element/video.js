@@ -1,2 +1,3 @@
-!function(r){"use strict";provide(["/demand/pledge"],function(e){var n=e.defer();return"canPlayType"in r.createElement("video")?n.resolve():n.reject(),n.pledge})}(document);
+/**! Qoopido.nucleus 3.1.8 | http://nucleus.qoopido.com | (c) 2020 Dirk Lueth */
+!function(e){"use strict";provide(["/demand/pledge"],(function(n){var r=n.defer();return"canPlayType"in e.createElement("video")?r.resolve():r.reject(),r.pledge}))}(document);
 //# sourceMappingURL=video.js.map

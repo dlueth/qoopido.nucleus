@@ -6,7 +6,7 @@
  * @require ../../function/debounce
  */
 
-(function(global, document, setInterval, undefined) {
+(function(global, document, setInterval) {
 	'use strict';
 
 	if(document.compatMode !== 'CSS1Compat') {

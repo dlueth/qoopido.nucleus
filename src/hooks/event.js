@@ -2,7 +2,7 @@
  * @use /demand/function/iterate
  */
 
-(function(global, document, undefined) {
+(function(global, document) {
 	'use strict';
 
 	function definition(iterate) {

@@ -3,7 +3,7 @@
  * @use /demand/function/iterate
  */
 
-(function(undefined) {
+(function() {
 	'use strict';
 
 	function definition(isObject, iterate) {

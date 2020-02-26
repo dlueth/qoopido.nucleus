@@ -1,2 +1,3 @@
-!function(o){"use strict";provide(function(){return function(e,i,u){var r;function a(){var n=this,t=arguments,c=u&&!r;a.cancel(),r=o(function(){a.cancel(),!u&&e.apply(n,t)},parseInt(i,10)||200),c&&e.apply(n,t)}return a.cancel=function(){r=clearTimeout(r)},a}})}(setTimeout);
+/**! Qoopido.nucleus 3.1.8 | http://nucleus.qoopido.com | (c) 2020 Dirk Lueth */
+!function(n){"use strict";provide((function(){return function(t,c,e){var i;function u(){var r=this,a=arguments,o=e&&!i;function f(){u.cancel(),!e&&t.apply(r,a)}u.cancel(),i=n(f,parseInt(c,10)||200),o&&t.apply(r,a)}return u.cancel=function(){i=clearTimeout(i)},u}}))}(setTimeout);
 //# sourceMappingURL=debounce.js.map
