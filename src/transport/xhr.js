@@ -49,7 +49,7 @@
 				pointer;
 
 			if(data && method === 'GET') {
-				iterate(data, url.parameter.set);
+				iterate(data, url.parameter.set, url);
 
 				data = null;
 			}
