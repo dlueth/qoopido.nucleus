@@ -12,23 +12,36 @@
 	'use strict';
 
 	function definition(Weakmap, Pledge, isObject, iterate, Url, functionMerge) {
-		var XDR                       = 'XDomainRequest' in global &&  global.XDomainRequest || XHR,
-			regexMatchSpaces          = /%20/g,
-			regexMatchOpeningBrackets = /%5B/g,
-			regexMatchClosingBrackets = /%5D/g,
-			storage                   = new Weakmap();
+		var XDR     = 'XDomainRequest' in global &&  global.XDomainRequest || XHR,
+			storage = new Weakmap();
 
-		function serialize(parameter) {
-			var result = '';
+		function flatten(object, prefix, items) {
+			var i = 0, value;
 
-			iterate(parameter, function(property, value) {
-				result += (!result ? '' : '&') + encodeURIComponent(property) + '=' + encodeURIComponent(value);
-			});
+			prefix = prefix || '';
+			items  = items || {};
 
-			return result
-				.replace(regexMatchSpaces, '+')
-				.replace(regexMatchOpeningBrackets, '[')
-				.replace(regexMatchClosingBrackets, ']');
+			if(Array.isArray(object)) {
+				for(i = 0; typeof (value = object[i]) !== 'undefined'; i++) {
+					flatten(value, prefix + '[' + i + ']', items);
+				}
+			} else if(isObject(object)) {
+				iterate(object, function(key, value) {
+					flatten(value, prefix ? prefix + '[' + key + ']' : key, items);
+				});
+			} else if(prefix && typeof object !== 'undefined') {
+				items[prefix] = object;
+			}
+
+			return items;
+		}
+
+		function serialize(data) {
+			var url = new Url('/');
+
+			iterate(data, url.parameter.set, url);
+
+			return url.search.substr(1);
 		}
 
 		function checkState() {
@@ -41,7 +54,7 @@
 			var properties      = storage.get(this),
 				settings        = properties.settings,
 				url             = properties.url,
-				data            = properties.data,
+				data            = flatten(properties.data),
 				xhr             = url.local ? new XHR() : new XDR(),
 				deferred        = Pledge.defer(),
 				boundCheckState = checkState.bind(xhr),
