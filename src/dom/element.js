@@ -70,7 +70,7 @@
 				event;
 
 			event = document.createEvent('CustomEvent');
-			event.initCustomEvent(type, type !== 'load', true, detail);
+			event.initCustomEvent(type, type !== 'load' && type !== 'resize', type !== 'load' && type !== 'resize', detail);
 
 			if(uuid) {
 				event.uuid       = uuid;

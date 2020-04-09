@@ -26,14 +26,14 @@
 		}
 
 		function Resize(node) {
-			var self = weakmap.get(node),
+			var self     = DomElement.call(this, node),
+				instance = weakmap.get(self.node),
 				position, sensor;
 
-			if(self) {
-				return self;
+			if(instance) {
+				return instance;
 			}
 
-			self     = weakmap.set(node, DomElement.call(this, node)).get(node);
 			position = self.getStyle('position');
 			sensor   = new DomElement('<iframe />', { draggable: 'false' }, styles);
 
@@ -48,6 +48,8 @@
 					};
 				})
 				.appendTo(self);
+
+			weakmap.set(self.node, self);
 		}
 
 		return Resize.extends(DomElement);
