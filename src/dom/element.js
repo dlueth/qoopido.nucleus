@@ -584,7 +584,7 @@
 				var self = this,
 					node = self.node;
 
-				node.parentNode.removeChild(node);
+				node.parentNode && node.parentNode.removeChild(node);
 
 				return self;
 			},
