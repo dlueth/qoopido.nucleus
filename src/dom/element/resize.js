@@ -35,7 +35,7 @@
 			}
 
 			position = self.getStyle('position');
-			sensor   = new DomElement('<iframe />', { draggable: 'false' }, styles);
+			sensor   = new DomElement('<iframe />', { draggable: 'false', 'aria-hidden': true }, styles);
 
 			if(position === 'static' || position === '') {
 				self.setStyle('position', 'relative');
