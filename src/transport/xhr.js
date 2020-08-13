@@ -52,9 +52,10 @@
 
 		function request(method) {
 			var properties      = storage.get(this),
+				isString        = typeof properties.data === 'string',
 				settings        = properties.settings,
 				url             = properties.url,
-				data            = flatten(properties.data),
+				data            = isString ? properties.data : flatten(properties.data),
 				xhr             = url.local ? new XHR() : new XDR(),
 				deferred        = Pledge.defer(),
 				boundCheckState = checkState.bind(xhr),
@@ -62,7 +63,11 @@
 				pointer;
 
 			if(data && method === 'GET') {
-				iterate(data, url.parameter.set, url);
+				if(isString) {
+					url.parameter = data;
+				} else {
+					iterate(data, url.parameter.set, url);
+				}
 
 				data = null;
 			}
@@ -71,7 +76,7 @@
 				url.parameter.set('nucleus', +new Date());
 			}
 
-			if(data) {
+			if(data && !isString) {
 				data = serialize(data);
 			}
 
@@ -114,6 +119,8 @@
 					});
 				}
 			}
+
+			console.log(data);
 
 			xhr.send(data);
 
@@ -161,7 +168,7 @@
 			username:    null,
 			password:    null,
 			contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-			header:      {},
+			header:      { 'x-requested-with': 'XMLHttpRequest' },
 			xhrOptions:  {}
 		};
 
