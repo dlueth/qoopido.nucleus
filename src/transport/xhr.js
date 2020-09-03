@@ -120,8 +120,6 @@
 				}
 			}
 
-			console.log(data);
-
 			xhr.send(data);
 
 			pointer = setTimeout(boundCheckState, timeout);
