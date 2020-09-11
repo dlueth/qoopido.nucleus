@@ -598,7 +598,7 @@
 
 				events = events.split(regexMatchSpaces);
 
-				for(; event = events[i]; i++) {
+				for(; (event = events[i]); i++) {
 					var id      = event + '-' + uuid,
 						handler = function(event) {
 							var delegateTo;
