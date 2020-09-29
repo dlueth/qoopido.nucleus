@@ -2,7 +2,7 @@
   "name": "qoopido.nucleus",
   "title": "Qoopido.nucleus",
   "description": "Lightweight, atomic and modular JavaScript utility library that strongly encourages the creation and usage of small yet flexible, reusable and easily maintainable modules.",
-  "version": "3.2.9",
+  "version": "3.2.10",
   "homepage": "http://nucleus.qoopido.com",
   "author": {
     "name": "Dirk Lueth",
@@ -40,7 +40,7 @@
     "lightweight"
   ],
   "devDependencies": {
-    "del": "5.1.0",
+    "del": "6.0.0",
     "gulp": "4.0.2",
     "gulp-bump": "3.2.0",
     "gulp-chmod": "3.0.0",
