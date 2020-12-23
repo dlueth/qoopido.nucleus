@@ -1,3 +1,3 @@
-/**! Qoopido.nucleus 3.2.10 | http://nucleus.qoopido.com | (c) 2020 Dirk Lueth */
+/**! Qoopido.nucleus 3.2.11 | http://nucleus.qoopido.com | (c) 2020 Dirk Lueth */
 !function(t){"use strict";var e=Object,r=e.create,o=e.getOwnPropertyNames,n=e.getOwnPropertyDescriptor,p=e.defineProperty;function i(t,e,r,o){return{__proto__:null,value:t,enumerable:!!o,configurable:!!r,writable:!!e}}function c(t,e,r,o,n){p(this,t,new i(e,r,o,n))}c.call(Object.prototype,"define",c),Function.prototype.define("extends",(function(t){for(var e,p=this,c=p.prototype,u=o(c),a={constructor:new i(p,!0,!0)},y=0;(e=u[y])&&!a[e];y++)a[e]=n(c,e);try{p.prototype=r(t.prototype||t,a)}catch(t){}if(p.prototype===c)throw new TypeError("Unable to extend, prototype is not writable");return p}))}();
 //# sourceMappingURL=base.js.map
