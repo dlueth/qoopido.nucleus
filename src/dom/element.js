@@ -65,23 +65,14 @@
 			return options && options.capture;
 		}
 
-		function emitEvent(type, detail, uuid) {
+		function emitEvent(type, detail) {
 			var self = this,
 				event;
 
 			event = document.createEvent('CustomEvent');
 			event.initCustomEvent(type, type !== 'load' && type !== 'resize', type !== 'load' && type !== 'resize', detail);
 
-			if(uuid) {
-				event.uuid       = uuid;
-				event.isDelegate = true;
-			}
-
 			self.node.dispatchEvent(event);
-
-			if(self.node !== global && !event.defaultPrevented && typeof self.node[type] === 'function') {
-				self.node[type]();
-			}
 		}
 
 		function resolveElement(element) {
@@ -108,11 +99,12 @@
 			return arrayPrototypeConcat.apply([], arrayPrototypeSlice.call(parameters)).join(' ').split(regexMatchSpaces);
 		}
 
-		function matchesDelegate(event, delegate) {
+		function matchesSelector(event, selector) {
 			var i = 0, pointer;
 
 			for(; pointer = event.path[i]; i++) {
-				if(pointer[STRING_MATCHES] && pointer[STRING_MATCHES](delegate)) {
+				if(pointer[STRING_MATCHES] && pointer[STRING_MATCHES](selector)) {
+					event.isDelegate    = true;
 					event.currentTarget = pointer;
 
 					return true;
@@ -590,7 +582,7 @@
 			},
 			on: function(events) {
 				var self     = this,
-					delegate = (arguments.length === 4 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
+					selector = (arguments.length === 4 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
 					fn       = (arguments.length === 4 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
 					options  = processOptions((arguments.length > 3) ? arguments[3] : arguments[2]),
 					uuid     = fn.uuid || (fn.uuid = generateUuid()),
@@ -601,22 +593,13 @@
 				for(; (event = events[i]); i++) {
 					var id      = event + '-' + uuid,
 						handler = function(event) {
-							var delegateTo;
-
 							event = new Event(event);
 
 							if(!event.isPropagationStopped) {
-								delegateTo  = event.delegate;
 								event.uuid = generateUuid();
 
-								if(!delegate || matchesDelegate(event, delegate)) {
+								if(!selector || matchesSelector(event, selector)) {
 									fn.call(event.currentTarget, event, event.originalEvent.detail);
-								}
-
-								if(delegateTo) {
-									delete event.delegate;
-
-									emitEvent.call(self, delegateTo);
 								}
 							}
 						};
@@ -631,7 +614,7 @@
 			},
 			one: function(events) {
 				var self     = this,
-					delegate = (arguments.length === 5 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
+					selector = (arguments.length === 5 || typeof arguments[1] === 'string') ? arguments[1] : NULL,
 					fn       = (arguments.length === 5 || typeof arguments[2] === 'function') ? arguments[2] : arguments[1],
 					options  = processOptions((arguments.length > 3) ? arguments[3] : arguments[2]),
 					each     = ((arguments.length > 4) ? arguments[4] : arguments[3]) !== false,
@@ -643,8 +626,8 @@
 
 				fn.uuid = handler.uuid = generateUuid();
 
-				if(delegate) {
-					self.on(events, delegate, handler, options);
+				if(selector) {
+					self.on(events, selector, handler, options);
 				} else {
 					self.on(events, handler, options);
 				}

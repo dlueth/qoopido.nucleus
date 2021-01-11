@@ -2,29 +2,56 @@
  * @require ../hooks/event
  */
 
-(function() {
+(function(global) {
 	'use strict';
 
 	function definition(hooksEvent) {
-		function DomEvent(event) {
-			hooksEvent.process(this, event);
+		function getTarget(event) {
+			var target = event.target || event.srcElement || document;
 
-			return this;
+			return target.nodeType === 3 ? target.parentNode : target;
+		}
+
+		function getPath(event) {
+			var path    = [],
+				pointer = event.target;
+
+			do {
+				path.push(pointer);
+			} while((pointer = pointer.parentNode));
+
+			path.push(global);
+
+			return path;
+		}
+
+		function DomEvent(event) {
+			var self          = this,
+				currentTarget = event.currentTarget;
+
+			Object.defineProperties(self, {
+				target:               { value: getTarget(event), enumerable: true },
+				path:                 { value: getPath(event), enumerable: true },
+				originalEvent:        { value: event, enumerable: true },
+				isDefaultPrevented:   { get: function() { return !!(event.defaultPrevented); }, enumerable: true },
+				isPropagationStopped: { get: function() { return !!(event.cancelBubble); }, enumerable: true },
+				currentTarget:        {
+					get:        function() { return currentTarget; },
+					set:        function(node) { if(self.path.indexOf(node) !== -1) { currentTarget = node; } },
+					enumerable: true
+				}
+			});
+
+			return hooksEvent.process(self, event);
 		}
 
 		DomEvent.prototype = {
-			originalEvent:                 null,
-			isDelegate:                    false,
-			isDefaultPrevented:            false,
-			isPropagationStopped:          false,
-			isImmediatePropagationStopped: false,
+			isDelegate: false,
 			preventDefault: function() {
 				var self  = this,
 					event = self.originalEvent;
 
 				if(self.cancelable !== false && !self.passive) {
-					self.isDefaultPrevented = true;
-
 					if(event.preventDefault) {
 						event.preventDefault();
 					} else {
@@ -36,8 +63,6 @@
 				var self  = this,
 					event = self.originalEvent;
 
-				self.isPropagationStopped = true;
-
 				if(event.stopPropagation) {
 					event.stopPropagation();
 				}
@@ -47,8 +72,6 @@
 			stopImmediatePropagation: function() {
 				var self  = this,
 					event = self.originalEvent;
-
-				self.isImmediatePropagationStopped = true;
 
 				if(event.stopImmediatePropagation) {
 					event.stopImmediatePropagation();
@@ -63,4 +86,4 @@
 	}
 
 	provide([ '../hooks/event' ], definition);
-}());
+}(this));

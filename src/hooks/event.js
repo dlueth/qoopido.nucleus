@@ -6,86 +6,100 @@
 	'use strict';
 
 	function definition(iterate) {
-		var NULL    = null,
-			storage = {
+		var storage = {
 				general: {
-					properties: 'type altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which path'.split(' '),
+					properties: 'bubbles cancelable isTrusted timeStamp type view altKey ctrlKey shiftKey button buttons clientX clientY fromElement offsetX offsetY screenX screenY toElement dataTransfer deltaX deltaY deltaZ deltaMode targetTouches char charCode key keyCode passive'.split(' ')
+				},
+				relatedTarget: {
+					match:      /^(?:blur|focus|focusin|focusout|mouseenter|mouseleave|mouseout|mouseover|dragenter|dragexit)/,
 					process:    function(event, originalEvent) {
-						var pointer;
-
-						event.originalEvent        = originalEvent;
-						event.isDefaultPrevented   = !!(originalEvent.defaultPrevented);
-						event.isPropagationStopped = !!(originalEvent.cancelBubble);
-						event.metaKey              = (originalEvent.metaKey && originalEvent.metaKey !== false) ? true : false;
-
-						if(!event.target) {
-							event.target = originalEvent.srcElement || document;
-						}
-
-						if(event.target.nodeType === 3) {
-							event.target = event.target.parentNode;
-						}
-
-						if(!event.path) {
-							event.path = [];
-							pointer    = event.target;
-
-							do {
-								event.path.push(pointer);
-							} while(pointer = pointer.parentNode);
-
-							event.path.push(global);
-						}
+						Object.defineProperty(event, 'relatedTarget', { value: (function() {
+								return originalEvent.relatedTarget || (originalEvent.fromElement === event.target) ? originalEvent.toElement : originalEvent.fromElement;
+							}()), enumerable: true });
 					}
 				},
-				mouse: {
-					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop|wheel)/,
-					properties: 'button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX screenY toElement dataTransfer deltaX deltaY deltaZ deltaMode targetTouches'.split(' '),
+				metaKey: {
+					match:      /^(?:key|mousedown|mouseup|click|dblclick)/,
 					process:    function(event, originalEvent) {
-						var pointer, fromElement, which;
-
-						fromElement = originalEvent.fromElement;
-						which       = originalEvent.button;
-
-						if(event.pageX === NULL && originalEvent.clientX !== NULL) {
-							pointer = event.target.ownerDocument || document;
-							pointer = pointer.documentElement || pointer.body;
-
-							event.pageX = originalEvent.clientX + (pointer.scrollLeft || 0) - (pointer.clientLeft || 0);
-							event.pageY = originalEvent.clientY + (pointer.scrollTop  || 0) - (pointer.clientTop  || 0);
-						}
-
-						if(!event.relatedTarget && fromElement) {
-							event.relatedTarget = (fromElement === event.target) ? originalEvent.toElement : fromElement;
-						}
-
-						if(!event.which && which !== undefined) {
-							event.which = (which & 1 ? 1 : (which & 2 ? 3 : (which & 4 ? 2 : 0)));
-						}
+						Object.defineProperty(event, 'metaKey', {
+							value:      originalEvent.metaKey && originalEvent.metaKey !== false,
+							enumerable: true
+						});
 					}
 				},
-				passive: {
-					match:      /^(?:touch|wheel)/,
-					properties: 'passive'.split(' ')
-				},
-				key: {
+				whichKeyboard: {
 					match:      /^(?:key)/,
-					properties: 'char charCode key keyCode'.split(' '),
 					process:    function(event, originalEvent) {
-						if(event.which === NULL) {
-							event.which = (originalEvent.charCode !== NULL) ? originalEvent.charCode : originalEvent.keyCode;
-						}
+						Object.defineProperty(event, 'which', {
+							value:      ((originalEvent.which || originalEvent.which !== 0) && originalEvent.which) || ((originalEvent.charCode !== null) ? originalEvent.charCode : originalEvent.keyCode),
+							enumerable: true
+						});
+					}
+				},
+				whichMouse: {
+					match:      /^(?:mousedown|mouseup|click|dblclick)/,
+					process:    function(event, originalEvent) {
+						Object.defineProperty(event, 'which', {
+							value:      ((originalEvent.which || originalEvent.which !== 0) && originalEvent.which) || (originalEvent.which & 1 ? 1 : (originalEvent.which & 2 ? 3 : (originalEvent.which & 4 ? 2 : 0))),
+							enumerable: true
+						});
+					}
+				},
+				pageX: {
+					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop|wheel)/,
+					process:    function(event, originalEvent) {
+						Object.defineProperty(event, 'pageX', {
+							value:      (function() {
+								if(typeof originalEvent.pageX !== 'undefined') {
+									return originalEvent.pageX;
+								}
+
+								return (function() {
+									var pointer = event.target.ownerDocument || document;
+
+									pointer = pointer.documentElement || pointer.body;
+
+									return originalEvent.clientX + (pointer.scrollLeft || 0) - (pointer.clientLeft || 0);
+								}());
+							}()),
+							enumerable: true
+						});
+					}
+				},
+				pageY: {
+					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop|wheel)/,
+					process:    function(event, originalEvent) {
+						Object.defineProperty(event, 'pageY', {
+							value: (function() {
+								if(typeof originalEvent.pageY !== 'undefined') {
+									return originalEvent.pageY;
+								}
+
+								return (function() {
+									var pointer = event.target.ownerDocument || document;
+
+									pointer = pointer.documentElement || pointer.body;
+
+									return originalEvent.clientY + (pointer.scrollTop  || 0) - (pointer.clientTop  || 0);
+								}());
+							}()),
+							enumerable: true
+						});
 					}
 				}
 			};
 
 		function transferProperties(event, originalEvent, properties) {
-			var i = 0,
-				property;
+			var definitions = {}, i = 0, property;
 
-			for(; property = properties[i]; i++) {
-				event[property] = originalEvent[property];
+			for(; (property = properties[i]) && typeof originalEvent[property] !== 'undefined'; i++) {
+				definitions[property] = {
+					value:      originalEvent[property],
+					enumerable: true
+				}
 			}
+
+			Object.defineProperties(event, definitions);
 		}
 
 		function add(property, aHook) {
@@ -114,12 +128,10 @@
 					if(hook.process) {
 						hook.process(event, originalEvent);
 					}
-
-					if(hook.delegate) {
-						event.delegate = hook.delegate;
-					}
 				}
 			});
+
+			return event;
 		}
 
 		return { add: add, get: get, process: process };
