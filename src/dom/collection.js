@@ -1,7 +1,6 @@
 /**
  * @use /demand/validator/isTypeOf
  * @use /demand/validator/isInstanceOf
- * @use /demand/descriptor
  *
  * @require ../element
  */
@@ -9,7 +8,7 @@
 (function(document) {
 	'use strict';
 
-	function definition(isTypeOf, isInstanceOf, Descriptor, DomElement) {
+	function definition(isTypeOf, isInstanceOf, DomElement) {
 		var arrayPrototypeSlice  = Array.prototype.slice,
 			objectDefineProperty = Object.defineProperty;
 
@@ -77,8 +76,8 @@
 		function DomCollection(elements) {
 			var self = this;
 
-			objectDefineProperty(self, 'elements', new Descriptor([]));
-			objectDefineProperty(self, 'nodes', new Descriptor([]));
+			objectDefineProperty(self, 'elements', { value: [] });
+			objectDefineProperty(self, 'nodes', { value: [] });
 
 			if(elements) {
 				self.add(elements);
@@ -251,5 +250,5 @@
 		return DomCollection;
 	}
 
-	provide([ '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', '/demand/descriptor', './element' ], definition);
+	provide([ '/demand/validator/isTypeOf', '/demand/validator/isInstanceOf', './element' ], definition);
 }(document));

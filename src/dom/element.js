@@ -4,7 +4,6 @@
  * @use /demand/validator/isTypeOf
  * @use /demand/function/uuid
  * @use /demand/function/iterate
- * @use /demand/descriptor
  *
  * @require ./event
  * @require ../hooks/css
@@ -14,7 +13,7 @@
 (function(global, document) {
 	'use strict';
 
-	function definition(isObject, isInstanceOf, isTypeOf, generateUuid, iterate, Descriptor, Event, hooksCss, supportMethod) {
+	function definition(isObject, isInstanceOf, isTypeOf, generateUuid, iterate, Event, hooksCss, supportMethod) {
 		var //shortcuts
 			documentBody             = document.body || document.getElementsByTagName('body')[0],
 			arrayPrototypeConcat     = Array.prototype.concat,
@@ -179,13 +178,13 @@
 				uuid           = generateUuid();
 				listener[uuid] = {};
 
-				objectDefineProperty(element, 'uuid', new Descriptor(uuid));
+				objectDefineProperty(element, 'uuid', { value: uuid });
 			}
 
 			objectDefineProperties(self, {
-				uuid: new Descriptor(uuid),
-				type: new Descriptor(element === global ? '#window' : element.nodeName),
-				node: new Descriptor(element)
+				uuid: { value: uuid },
+				type: { value: element === global ? '#window' : element.nodeName },
+				node: { value: element }
 			});
 
 			if(isObject(attributes)) {
@@ -669,5 +668,5 @@
 		return DomElement;
 	}
 
-	provide([ '/demand/validator/isObject', '/demand/validator/isInstanceOf', '/demand/validator/isTypeOf', '/demand/function/uuid', '/demand/function/iterate', '/demand/descriptor', './event', '../hooks/css', '../support/method' ], definition);
+	provide([ '/demand/validator/isObject', '/demand/validator/isInstanceOf', '/demand/validator/isTypeOf', '/demand/function/uuid', '/demand/function/iterate', './event', '../hooks/css', '../support/method' ], definition);
 }(this, document));

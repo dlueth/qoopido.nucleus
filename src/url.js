@@ -1,13 +1,12 @@
 /**
  * @use /demand/abstract/uuid
- * @use /demand/descriptor
  * @use /demand/function/iterate
  */
 
 (function(global, document) {
 	'use strict';
 
-	function definition(abstractUuid, Descriptor, iterate) {
+	function definition(abstractUuid, iterate) {
 		var objectDefineProperties    = Object.defineProperties,
 			storage                   = {},
 			regexMatchLeadingSlash    = /^\//,
@@ -49,7 +48,7 @@
 		function Parameter(uuid) {
 			var self = this;
 
-			objectDefineProperties(self, { uuid: new Descriptor(uuid) });
+			objectDefineProperties(self, { uuid: { value: uuid } });
 
 			Parameter.update(self);
 		}
@@ -115,9 +114,9 @@
 			};
 
 			objectDefineProperties(self, {
-				toString:  new Descriptor(function() { return link.toString(); }),
-				valueOf:   new Descriptor(function() { return link.valueOf(); }),
-				parameter: new Descriptor(new Parameter(self.uuid))
+				toString:  { value: function() { return link.toString() } },
+				valueOf:   { value: function() { return link.valueOf(); } },
+				parameter: { value: new Parameter(self.uuid) }
 			});
 
 			return self;
@@ -213,5 +212,5 @@
 		return Url.extends(abstractUuid);
 	}
 
-	provide([ '/demand/abstract/uuid', '/demand/descriptor', '/demand/function/iterate' ], definition);
+	provide([ '/demand/abstract/uuid', '/demand/function/iterate' ], definition);
 }(this, document));

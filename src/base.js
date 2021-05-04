@@ -7,25 +7,11 @@
 		objectGetOwnPropertyDescriptor = object.getOwnPropertyDescriptor,
 		objectDefineProperty           = object.defineProperty;
 
-	function ClassDescriptor(value, writable, configurable, enumerable) {
-		return {
-			__proto__:    null,
-			value:        value,
-			enumerable:   !!enumerable,
-			configurable: !!configurable,
-			writable:     !!writable
-		};
-	}
-
-	function objectDefine(name, value, writable, configurable, enumerable) {
-		objectDefineProperty(this, name, new ClassDescriptor(value, writable, configurable, enumerable));
-	}
-
 	function functionExtends(source) {
 		var self       = this,
 			prototype  = self[strPrototype],
 			names      = objectGetOwnPropertyNames(prototype),
-			properties = { constructor:  new ClassDescriptor(self, true, true)},
+			properties = { constructor: { value: self, writable: true, configurable: true }},
 			i = 0, property;
 
 		for(; (property = names[i]) && !properties[property]; i++) {
@@ -47,6 +33,5 @@
 		return self;
 	}
 
-	objectDefine.call(Object.prototype, 'define', objectDefine);
-	Function.prototype.define('extends', functionExtends);
+	objectDefineProperty(Function.prototype, 'extends', functionExtends);
 }('prototype'));
