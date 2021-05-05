@@ -6,14 +6,16 @@
 	'use strict';
 
 	function definition(iterate) {
-		var storage = {
+		var objectDefineProperty   = Object.defineProperty,
+			objectDefineProperties = Object.defineProperties,
+			storage = {
 				general: {
 					properties: 'bubbles cancelable isTrusted timeStamp type view altKey ctrlKey shiftKey button buttons clientX clientY fromElement offsetX offsetY screenX screenY toElement dataTransfer deltaX deltaY deltaZ deltaMode targetTouches char charCode key keyCode passive'.split(' ')
 				},
 				relatedTarget: {
 					match:      /^(?:blur|focus|focusin|focusout|mouseenter|mouseleave|mouseout|mouseover|dragenter|dragexit)/,
 					process:    function(event, originalEvent) {
-						Object.defineProperty(event, 'relatedTarget', { value: (function() {
+						objectDefineProperty(event, 'relatedTarget', { value: (function() {
 								return originalEvent.relatedTarget || (originalEvent.fromElement === event.target) ? originalEvent.toElement : originalEvent.fromElement;
 							}()), enumerable: true });
 					}
@@ -21,7 +23,7 @@
 				metaKey: {
 					match:      /^(?:key|mousedown|mouseup|click|dblclick)/,
 					process:    function(event, originalEvent) {
-						Object.defineProperty(event, 'metaKey', {
+						objectDefineProperty(event, 'metaKey', {
 							value:      originalEvent.metaKey && originalEvent.metaKey !== false,
 							enumerable: true
 						});
@@ -30,7 +32,7 @@
 				whichKeyboard: {
 					match:      /^(?:key)/,
 					process:    function(event, originalEvent) {
-						Object.defineProperty(event, 'which', {
+						objectDefineProperty(event, 'which', {
 							value:      ((originalEvent.which || originalEvent.which !== 0) && originalEvent.which) || ((originalEvent.charCode !== null) ? originalEvent.charCode : originalEvent.keyCode),
 							enumerable: true
 						});
@@ -39,28 +41,26 @@
 				whichMouse: {
 					match:      /^(?:mousedown|mouseup|click|dblclick)/,
 					process:    function(event, originalEvent) {
-						Object.defineProperty(event, 'which', {
+						objectDefineProperty(event, 'which', {
 							value:      ((originalEvent.which || originalEvent.which !== 0) && originalEvent.which) || (originalEvent.which & 1 ? 1 : (originalEvent.which & 2 ? 3 : (originalEvent.which & 4 ? 2 : 0))),
 							enumerable: true
 						});
 					}
 				},
 				pageX: {
-					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop|wheel)/,
+					match:      /^(?:mouse|pointer|contextmenu|click|dblclick|drag|drop|wheel)/,
 					process:    function(event, originalEvent) {
-						Object.defineProperty(event, 'pageX', {
+						objectDefineProperty(event, 'pageX', {
 							value:      (function() {
+								var documentElement;
+
 								if(typeof originalEvent.pageX !== 'undefined') {
 									return originalEvent.pageX;
 								}
 
-								return (function() {
-									var pointer = event.target.ownerDocument || document;
+								documentElement = (event.target.ownerDocument || document).documentElement;
 
-									pointer = pointer.documentElement || pointer.body;
-
-									return originalEvent.clientX + (pointer.scrollLeft || 0) - (pointer.clientLeft || 0);
-								}());
+								return originalEvent.clientX + (documentElement.scrollLeft || 0) - (documentElement.clientLeft || 0);
 							}()),
 							enumerable: true
 						});
@@ -69,19 +69,17 @@
 				pageY: {
 					match:      /^(?:mouse|pointer|contextmenu|touch|click|dblclick|drag|drop|wheel)/,
 					process:    function(event, originalEvent) {
-						Object.defineProperty(event, 'pageY', {
+						objectDefineProperty(event, 'pageY', {
 							value: (function() {
+								var documentElement;
+
 								if(typeof originalEvent.pageY !== 'undefined') {
 									return originalEvent.pageY;
 								}
 
-								return (function() {
-									var pointer = event.target.ownerDocument || document;
+								documentElement = (event.target.ownerDocument || document).documentElement;
 
-									pointer = pointer.documentElement || pointer.body;
-
-									return originalEvent.clientY + (pointer.scrollTop  || 0) - (pointer.clientTop  || 0);
-								}());
+								return originalEvent.clientY + (documentElement.scrollTop  || 0) - (documentElement.clientTop  || 0);
 							}()),
 							enumerable: true
 						});
@@ -92,14 +90,16 @@
 		function transferProperties(event, originalEvent, properties) {
 			var definitions = {}, i = 0, property;
 
-			for(; (property = properties[i]) && typeof originalEvent[property] !== 'undefined'; i++) {
-				definitions[property] = {
-					value:      originalEvent[property],
-					enumerable: true
+			for(; (property = properties[i]); i++) {
+				if(typeof originalEvent[property] !== 'undefined') {
+					definitions[property] = {
+						value:      originalEvent[property],
+						enumerable: true
+					}
 				}
 			}
 
-			Object.defineProperties(event, definitions);
+			objectDefineProperties(event, definitions);
 		}
 
 		function add(property, aHook) {
