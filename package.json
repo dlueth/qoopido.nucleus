@@ -2,7 +2,7 @@
   "name": "qoopido.nucleus",
   "title": "Qoopido.nucleus",
   "description": "Lightweight, atomic and modular JavaScript utility library that strongly encourages the creation and usage of small yet flexible, reusable and easily maintainable modules.",
-  "version": "3.2.14",
+  "version": "3.2.15",
   "homepage": "http://nucleus.qoopido.com",
   "author": {
     "name": "Dirk Lueth",
@@ -17,6 +17,7 @@
   },
   "license": "MIT",
   "browser": "dist/base.js",
+  "main": "dist/base.js",
   "filename": "base.js",
   "autoupdate": {
     "source": "git",
@@ -50,7 +51,7 @@
     "gulp-inject-version": "1.0.1",
     "gulp-jsbeautifier": "3.0.1",
     "gulp-livereload": "4.0.2",
-    "gulp-load-plugins": "2.0.6",
+    "gulp-load-plugins": "2.0.7",
     "gulp-rename": "2.0.0",
     "gulp-size": "4.0.0",
     "gulp-sourcemaps": "3.0.0",
